@@ -22,7 +22,8 @@ def add_10_guard(
 ):
     var size = Int(size_dev)
     var i = thread_idx.x
-    # FILL ME IN (roughly 2 lines)
+    if i < size:
+        output[unsafe_offset=i] = a[unsafe_offset=i] + 10
 
 
 # ANCHOR_END: add_10_guard
