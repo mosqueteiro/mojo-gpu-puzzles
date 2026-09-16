@@ -1,0 +1,437 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Puzzle 9: GPU Debugging Workflow - Mojo 🔥 GPU Puzzles</title>
+
+
+        <!-- Custom HTML head -->
+        <!-- Fonts + lottie-player are fetched from CDN (lottie-player pinned to a
+             fixed version). If a resource fails to load (e.g. no network access),
+             each falls back to a locally vendored copy in theme/vendor-cache/
+             (gitignored; populated by `pixi run fetch-offline-assets`, see
+             scripts/fetch_offline_assets.sh) — no build-time step or
+             version-controlled file swap involved. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+            onload="this.onload=null;this.rel='stylesheet'"
+            onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/roboto-mono.css'">
+        <noscript><link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"></noscript>
+        
+        <script defer src="https://unpkg.com/@lottiefiles/lottie-player@2.0.12/dist/lottie-player.js"
+            onerror="var s=document.createElement('script');s.src='../theme/vendor-cache/lottie-player.js';document.head.appendChild(s);"></script>
+        
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" id="theme">
+        
+        <!-- Additional meta tags -->
+        <meta property="og:title" content="Mojo🔥 GPU Puzzles">
+        <meta property="og:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta property="og:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+        <meta property="og:url" content="https://puzzles.modular.com/">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:image:alt" content="Mojo GPU Puzzles Logo">
+        <meta name="twitter:title" content="Mojo🔥 GPU Puzzles">
+        <meta name="twitter:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta name="twitter:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+
+        <!-- Fetched from CDN; falls back to a locally vendored copy in
+             theme/vendor-cache/ (gitignored; see scripts/fetch_offline_assets.sh)
+             if it fails to load, e.g. no network access. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" onload="this.onload=null;this.rel='stylesheet'" onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/inter.css'">
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"></noscript>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" href="../theme/css/tabs.css">
+        <link rel="stylesheet" href="../theme/css/language-switcher.css">
+
+        <!--
+            MathJax locale fix: In non-English locales (e.g. lang="ko"), browsers apply CJK
+            font fallback to MathJax's font measurement div, causing incorrect bounding box
+            widths for long formulas. Fix: temporarily set lang="en" on <html> during
+            MathJax's entire startup, then restore the original lang. Individual .MathJax
+            elements keep lang="en" to prevent visual CJK font fallback.
+        -->
+        <script type="text/x-mathjax-config">
+            (function() {
+                var html = document.documentElement;
+                var origLang = html.getAttribute('lang');
+                if (origLang && origLang !== 'en') {
+                    html.setAttribute('lang', 'en');
+                    MathJax.Hub.Register.StartupHook("End", function() {
+                        html.setAttribute('lang', origLang);
+                        document.querySelectorAll('.MathJax, .MathJax_Display').forEach(function(el) {
+                            el.setAttribute('lang', 'en');
+                        });
+                    });
+                }
+            })();
+        </script>
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "ayu";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <button class="collapse-sidebar" aria-label="Collapse sidebar"></button>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Toggle color mode and talk to us buttons -->
+        <script>
+            document.addEventListener('click', function (event) {
+                if (!event.target.matches('.theme-toggle')) return;
+                event.preventDefault();
+                const prevTheme = theme;
+                html.classList.remove(theme);
+                const newTheme = prevTheme === 'ayu' ? 'light' : 'ayu'
+                html.classList.add(newTheme);
+                theme = newTheme
+                localStorage.setItem('mdbook-theme', theme);
+            }, false);
+            document.addEventListener('click', function() {
+                if (!event.target.matches('.log-in')) return;
+                event.preventDefault();
+                window.amplitude.logEvent('LoginClickedFromPuzzles');
+                window.open('https://developer.modular.com', '_blank');
+            });
+        </script>
+
+        <div class="page-header">
+            <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                <i class="fa fa-bars"></i>
+            </label>
+            <div id="menu-bar" class="menu-bar">
+                <div class="left-buttons">
+                    <div class="logo-section">
+                        <a class="desktop-logo-link" href="https://modular.com"></a>
+                        <a class="mobile-logo-link" href="https://builds.modular.com"></a>
+                        <div class="slash">/</div>
+                        <a class="internal-link" ref="/">Puzzles</a>
+                    </div>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Dark</button></li>
+                        </ul>
+                    </div>
+                <div class="right-buttons">
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <div id="language-switcher-placeholder"></div>
+                    <button id="theme-toggle" class="icon-button theme-toggle-btn" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="false" aria-expanded="false">
+                        <i class="theme-toggle"></i>
+                    </button>
+                    <a class="menu-btn print" href="../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a class="menu-btn" href="https://github.com/modular/mojo-gpu-puzzles" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+            <div class="page">
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="puzzle-9-gpu-debugging-workflow"><a class="header" href="#puzzle-9-gpu-debugging-workflow">Puzzle 9: GPU Debugging Workflow</a></h1>
+<blockquote>
+<p>⚠️ This puzzle works on compatible <strong>NVIDIA GPU</strong> only. We are working to
+enable tooling support for other GPU vendors.</p>
+</blockquote>
+<h2 id="when-gpu-programs-fail"><a class="header" href="#when-gpu-programs-fail">When GPU programs fail</a></h2>
+<p>You’ve written GPU kernels, worked with shared memory, and coordinated thousands
+of parallel threads. Your code compiles. You run it expecting correct results,
+and then:</p>
+<ul>
+<li><strong>CRASH</strong></li>
+<li><strong>Wrong results</strong></li>
+<li><strong>Infinite hang</strong></li>
+</ul>
+<p>This is GPU programming reality:
+<strong>debugging parallel code running on thousands of threads simultaneously</strong>. This
+is where theory meets practice, where algorithmic knowledge meets investigative
+skills.</p>
+<h2 id="why-gpu-debugging-is-challenging"><a class="header" href="#why-gpu-debugging-is-challenging">Why GPU debugging is challenging</a></h2>
+<p>Unlike traditional CPU debugging where you follow a single thread through
+sequential execution, GPU debugging requires you to:</p>
+<ul>
+<li><strong>Think in parallel</strong>: Thousands of threads executing simultaneously, each
+potentially doing something different</li>
+<li><strong>Navigate multiple memory spaces</strong>: Global memory, shared memory, registers,
+constant memory</li>
+<li><strong>Handle coordination failures</strong>: Race conditions, barrier deadlocks, memory
+access violations</li>
+<li><strong>Debug optimized code</strong>: variable optimization, limited symbol information</li>
+<li><strong>Use specialized tools</strong>: CUDA-GDB for kernel inspection, thread navigation,
+parallel state analysis</li>
+</ul>
+<p><strong>GPU debugging skills provide deep understanding of parallel computing
+fundamentals</strong>.</p>
+<h2 id="what-youll-learn-in-this-puzzle"><a class="header" href="#what-youll-learn-in-this-puzzle">What you’ll learn in this puzzle</a></h2>
+<p>This puzzle teaches you to debug GPU code systematically. You’ll learn the
+approaches, tools, and techniques that GPU developers use daily to solve complex
+parallel programming challenges.</p>
+<h3 id="essential-skills-youll-develop"><a class="header" href="#essential-skills-youll-develop"><strong>Essential skills you’ll develop</strong></a></h3>
+<ol>
+<li><strong>Professional debugging workflow</strong> - The systematic approach professionals
+use</li>
+<li><strong>Tool proficiency</strong> - LLDB for host code, CUDA-GDB for GPU kernels</li>
+<li><strong>Pattern recognition</strong> - Common GPU bug types and symptoms</li>
+<li><strong>Investigation techniques</strong> - Finding root causes when variables are
+optimized out</li>
+<li><strong>Thread coordination debugging</strong> - Advanced GPU debugging skills</li>
+</ol>
+<h3 id="real-world-debugging-scenarios"><a class="header" href="#real-world-debugging-scenarios"><strong>Real-world debugging scenarios</strong></a></h3>
+<p>You’ll tackle the three most common GPU programming failures:</p>
+<ul>
+<li><strong>Memory crashes</strong> - Null pointers, illegal memory access, segmentation faults</li>
+<li><strong>Logic bugs</strong> - Correct execution with wrong results, algorithmic errors</li>
+<li><strong>Coordination deadlocks</strong> - Barrier synchronization failures, infinite hangs</li>
+</ul>
+<p>Each scenario teaches different investigation techniques and builds debugging
+intuition.</p>
+<h2 id="your-debugging-journey"><a class="header" href="#your-debugging-journey">Your debugging journey</a></h2>
+<p>This puzzle takes you through a carefully designed progression from basic
+debugging concepts to advanced parallel coordination failures:</p>
+<h3 id="-step-1-mojo-gpu-debugging-essentials"><a class="header" href="#-step-1-mojo-gpu-debugging-essentials">📚 <strong>Step 1: <a href="./essentials.html">Mojo GPU Debugging Essentials</a></strong></a></h3>
+<p><strong>Foundation building</strong> - Learn the tools and workflow</p>
+<ul>
+<li>Set up your debugging environment with <code>pixi</code> and CUDA-GDB</li>
+<li>Learn the four debugging approaches: source vs binary, CPU vs GPU</li>
+<li>Learn essential CUDA-GDB commands for GPU kernel inspection</li>
+<li>Practice with hands-on examples using familiar code from previous puzzles</li>
+<li>Understand when to use each debugging approach</li>
+</ul>
+<p><strong>Key outcome</strong>: Professional debugging workflow and tool proficiency</p>
+<h3 id="-step-2-detective-work-first-case"><a class="header" href="#-step-2-detective-work-first-case">🧐 <strong>Step 2: <a href="./first_case.html">Detective Work: First Case</a></strong></a></h3>
+<p><strong>Memory crash investigation</strong> - Debug a GPU program that crashes</p>
+<ul>
+<li>Investigate <code>CUDA_ERROR_ILLEGAL_ADDRESS</code> crashes</li>
+<li>Learn systematic pointer inspection techniques</li>
+<li>Learn null pointer detection and validation</li>
+<li>Practice professional crash analysis workflow</li>
+<li>Understand GPU memory access failures</li>
+</ul>
+<p><strong>Key outcome</strong>: Ability to debug GPU memory crashes and pointer issues</p>
+<h3 id="-step-3-detective-work-second-case"><a class="header" href="#-step-3-detective-work-second-case">🔍 <strong>Step 3: <a href="./second_case.html">Detective Work: Second Case</a></strong></a></h3>
+<p><strong>Logic bug investigation</strong> - Debug a program with wrong results</p>
+<ul>
+<li>Investigate TileTensor-based algorithmic errors</li>
+<li>Learn execution flow analysis when variables are optimized out</li>
+<li>Learn loop boundary analysis and iteration counting</li>
+<li>Practice pattern recognition in incorrect results</li>
+<li>Debug without direct variable inspection</li>
+</ul>
+<p><strong>Key outcome</strong>: Ability to debug algorithmic errors and logic bugs in GPU
+kernels</p>
+<h3 id="-step-4-detective-work-third-case"><a class="header" href="#-step-4-detective-work-third-case">🕵️ <strong>Step 4: <a href="./third_case.html">Detective Work: Third Case</a></strong></a></h3>
+<p><strong>Barrier deadlock investigation</strong> - Debug a program that hangs forever</p>
+<ul>
+<li>Investigate barrier synchronization failures</li>
+<li>Learn multi-thread state analysis across parallel execution</li>
+<li>Learn conditional execution path tracing</li>
+<li>Practice thread coordination debugging</li>
+<li>Understand the most challenging GPU debugging scenario</li>
+</ul>
+<p><strong>Key outcome</strong>: Advanced thread coordination debugging - the pinnacle of GPU
+debugging skills</p>
+<h2 id="the-detective-mindset"><a class="header" href="#the-detective-mindset">The detective mindset</a></h2>
+<p>GPU debugging requires a different mindset than traditional programming. You
+become a <strong>detective</strong> investigating a crime scene where:</p>
+<ul>
+<li><strong>The evidence is limited</strong> - Variables are optimized out, symbols are mangled</li>
+<li><strong>Multiple suspects exist</strong> - Thousands of threads, any could be the culprit</li>
+<li><strong>The timeline is complex</strong> - Parallel execution, race conditions, timing
+dependencies</li>
+<li><strong>The tools are specialized</strong> - CUDA-GDB, thread navigation, GPU memory
+inspection</li>
+</ul>
+<p>But like any good detective, you’ll learn to:</p>
+<ul>
+<li><strong>Follow the clues systematically</strong> - Error messages, crash patterns, thread
+states</li>
+<li><strong>Form hypotheses</strong> - What could cause this specific behavior?</li>
+<li><strong>Test theories</strong> - Use debugging commands to verify or disprove ideas</li>
+<li><strong>Trace back to root causes</strong> - From symptoms to the actual source of problems</li>
+</ul>
+<h2 id="prerequisites-and-expectations"><a class="header" href="#prerequisites-and-expectations">Prerequisites and expectations</a></h2>
+<p><strong>What you need to know</strong>:</p>
+<ul>
+<li>GPU programming concepts from Puzzles 1-8 (thread indexing, memory management,
+barriers)</li>
+<li>Basic command-line comfort (you’ll use terminal-based debugging tools)</li>
+<li>Patience and systematic thinking (GPU debugging requires methodical
+investigation)</li>
+</ul>
+<p><strong>What you’ll gain</strong>:</p>
+<ul>
+<li><strong>Professional debugging skills</strong> used in GPU development teams</li>
+<li><strong>Deep parallel computing understanding</strong> that comes from seeing execution at
+the thread level</li>
+<li><strong>Problem-solving confidence</strong> for the most challenging GPU programming
+scenarios</li>
+<li><strong>Tool proficiency</strong> that will serve you throughout your GPU programming
+career</li>
+</ul>
+<h2 id="ready-to-begin"><a class="header" href="#ready-to-begin">Ready to begin?</a></h2>
+<p>GPU debugging is where you transition from <em>writing</em> GPU programs to
+<em>understanding</em> them deeply. Every professional GPU developer has spent
+countless hours debugging parallel code, learning to think in thousands of
+simultaneous threads, and developing the patience to investigate complex
+coordination failures.</p>
+<p>This is your opportunity to join that elite group.</p>
+<p><strong>Start your debugging journey</strong>:
+<a href="./essentials.html">Mojo GPU Debugging Essentials</a></p>
+<hr />
+<p><em>“Debugging is twice as hard as writing the code in the first place. Therefore,
+if you write the code as cleverly as possible, you are, by definition, not smart
+enough to debug it.”</em> - Brian Kernighan</p>
+<p><em>In GPU programming, this wisdom is amplified by a factor of thousands - the
+number of parallel threads you’re debugging simultaneously.</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../puzzle_08/puzzle_08.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../puzzle_09/essentials.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../puzzle_08/puzzle_08.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../puzzle_09/essentials.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/mojolang.js"></script>
+        <script src="../theme/sidebar.js"></script>
+        <script src="../theme/solution.js"></script>
+        <script src="../theme/init-amplitude.js"></script>
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/language-switcher.js"></script>
+
+
+    </div>
+    </body>
+</html>

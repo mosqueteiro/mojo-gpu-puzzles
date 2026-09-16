@@ -1,0 +1,662 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>elementwise - Basic GPU Functional Operations - Mojo 🔥 GPU Puzzles</title>
+
+
+        <!-- Custom HTML head -->
+        <!-- Fonts + lottie-player are fetched from CDN (lottie-player pinned to a
+             fixed version). If a resource fails to load (e.g. no network access),
+             each falls back to a locally vendored copy in theme/vendor-cache/
+             (gitignored; populated by `pixi run fetch-offline-assets`, see
+             scripts/fetch_offline_assets.sh) — no build-time step or
+             version-controlled file swap involved. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+            onload="this.onload=null;this.rel='stylesheet'"
+            onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/roboto-mono.css'">
+        <noscript><link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"></noscript>
+        
+        <script defer src="https://unpkg.com/@lottiefiles/lottie-player@2.0.12/dist/lottie-player.js"
+            onerror="var s=document.createElement('script');s.src='../theme/vendor-cache/lottie-player.js';document.head.appendChild(s);"></script>
+        
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" id="theme">
+        
+        <!-- Additional meta tags -->
+        <meta property="og:title" content="Mojo🔥 GPU Puzzles">
+        <meta property="og:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta property="og:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+        <meta property="og:url" content="https://puzzles.modular.com/">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:image:alt" content="Mojo GPU Puzzles Logo">
+        <meta name="twitter:title" content="Mojo🔥 GPU Puzzles">
+        <meta name="twitter:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta name="twitter:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+
+        <!-- Fetched from CDN; falls back to a locally vendored copy in
+             theme/vendor-cache/ (gitignored; see scripts/fetch_offline_assets.sh)
+             if it fails to load, e.g. no network access. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" onload="this.onload=null;this.rel='stylesheet'" onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/inter.css'">
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"></noscript>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" href="../theme/css/tabs.css">
+        <link rel="stylesheet" href="../theme/css/language-switcher.css">
+
+        <!--
+            MathJax locale fix: In non-English locales (e.g. lang="ko"), browsers apply CJK
+            font fallback to MathJax's font measurement div, causing incorrect bounding box
+            widths for long formulas. Fix: temporarily set lang="en" on <html> during
+            MathJax's entire startup, then restore the original lang. Individual .MathJax
+            elements keep lang="en" to prevent visual CJK font fallback.
+        -->
+        <script type="text/x-mathjax-config">
+            (function() {
+                var html = document.documentElement;
+                var origLang = html.getAttribute('lang');
+                if (origLang && origLang !== 'en') {
+                    html.setAttribute('lang', 'en');
+                    MathJax.Hub.Register.StartupHook("End", function() {
+                        html.setAttribute('lang', origLang);
+                        document.querySelectorAll('.MathJax, .MathJax_Display').forEach(function(el) {
+                            el.setAttribute('lang', 'en');
+                        });
+                    });
+                }
+            })();
+        </script>
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "ayu";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <button class="collapse-sidebar" aria-label="Collapse sidebar"></button>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Toggle color mode and talk to us buttons -->
+        <script>
+            document.addEventListener('click', function (event) {
+                if (!event.target.matches('.theme-toggle')) return;
+                event.preventDefault();
+                const prevTheme = theme;
+                html.classList.remove(theme);
+                const newTheme = prevTheme === 'ayu' ? 'light' : 'ayu'
+                html.classList.add(newTheme);
+                theme = newTheme
+                localStorage.setItem('mdbook-theme', theme);
+            }, false);
+            document.addEventListener('click', function() {
+                if (!event.target.matches('.log-in')) return;
+                event.preventDefault();
+                window.amplitude.logEvent('LoginClickedFromPuzzles');
+                window.open('https://developer.modular.com', '_blank');
+            });
+        </script>
+
+        <div class="page-header">
+            <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                <i class="fa fa-bars"></i>
+            </label>
+            <div id="menu-bar" class="menu-bar">
+                <div class="left-buttons">
+                    <div class="logo-section">
+                        <a class="desktop-logo-link" href="https://modular.com"></a>
+                        <a class="mobile-logo-link" href="https://builds.modular.com"></a>
+                        <div class="slash">/</div>
+                        <a class="internal-link" ref="/">Puzzles</a>
+                    </div>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Dark</button></li>
+                        </ul>
+                    </div>
+                <div class="right-buttons">
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <div id="language-switcher-placeholder"></div>
+                    <button id="theme-toggle" class="icon-button theme-toggle-btn" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="false" aria-expanded="false">
+                        <i class="theme-toggle"></i>
+                    </button>
+                    <a class="menu-btn print" href="../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a class="menu-btn" href="https://github.com/modular/mojo-gpu-puzzles" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+            <div class="page">
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="elementwise---basic-gpu-functional-operations"><a class="header" href="#elementwise---basic-gpu-functional-operations">Elementwise - Basic GPU Functional Operations</a></h1>
+<p>This puzzle implements vector addition using Mojo’s functional <code>elementwise</code>
+pattern. Each thread automatically processes multiple SIMD elements, showing how
+modern GPU programming abstracts low-level details while preserving high
+performance.</p>
+<p><strong>Key insight:</strong> <em>The
+<a href="https://max.modular.com/api/mojo/max/algorithm/functional/elementwise/">elementwise</a>
+function automatically handles thread management, SIMD vectorization, and memory
+coalescing for you.</em></p>
+<h2 id="key-concepts"><a class="header" href="#key-concepts">Key concepts</a></h2>
+<p>This puzzle covers:</p>
+<ul>
+<li><strong>Functional GPU programming</strong> with <code>elementwise</code></li>
+<li><strong>Automatic SIMD vectorization</strong> within GPU threads</li>
+<li><strong>TileTensor operations</strong> for safe memory access</li>
+<li><strong>GPU thread hierarchy</strong> vs SIMD operations</li>
+<li><strong>Capturing semantics</strong> in nested functions</li>
+</ul>
+<p>The mathematical operation is simple element-wise addition:
+\[\Large \text{output}[i] = a[i] + b[i]\]</p>
+<p>The implementation covers fundamental patterns applicable to all GPU functional
+programming in Mojo.</p>
+<p><strong>Where to start:</strong> You begin from the <code>elementwise</code> template in the problem file
+— there is no manual shared memory or thread-index math here. The key shift from
+earlier puzzles is that each invocation of your nested function processes a whole
+SIMD vector, not a single element. That’s why you load and store with
+<code>aligned_load[simd_width]</code> / <code>store[simd_width]</code> (vectorized) instead of indexing
+one scalar at a time.</p>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<ul>
+<li>Vector size: <code>SIZE = 1024</code></li>
+<li>Data type: <code>DType.float32</code></li>
+<li>SIMD width: Target-dependent (determined by GPU architecture and data type)</li>
+<li>Layout: <code>row_major[SIZE]()</code> (1D row-major)</li>
+</ul>
+<blockquote>
+<p><strong>Scope:</strong> This is a single-kernel, per-element operation. The <code>elementwise</code>
+abstraction handles thread, block, and grid configuration for you — there is no
+cross-thread or cross-block communication to reason about here.</p>
+</blockquote>
+<h2 id="code-to-complete"><a class="header" href="#code-to-complete">Code to complete</a></h2>
+<pre><code class="language-mojo">def elementwise_add[
+    LayoutT: TensorLayout, dtype: DType, simd_width: Int, rank: Int, size: Int
+](
+    output: TileTensor[mut=True, dtype, LayoutT, MutAnyOrigin],
+    a: TileTensor[mut=False, dtype, LayoutT, MutAnyOrigin],
+    b: TileTensor[mut=False, dtype, LayoutT, MutAnyOrigin],
+    ctx: DeviceContext,
+) raises:
+    @parameter
+    @always_inline
+    def add[
+        simd_width: Int, alignment: Int = align_of[dtype]()
+    ](indices: Coord) capturing -&gt; None:
+        var idx = Int(indices[0].value())
+        # FILL IN (2 to 4 lines)
+
+    elementwise[add, SIMD_WIDTH, target="gpu"](size, ctx)
+
+
+</code></pre>
+<p><a href="https://github.com/modular/mojo-gpu-puzzles/blob/main/problems/p23/p23.mojo" class="filename">View full file: problems/p23/p23.mojo</a></p>
+<details>
+<summary><strong>Tips</strong></summary>
+<div class="solution-tips">
+<h3 id="1-understanding-the-function-structure"><a class="header" href="#1-understanding-the-function-structure">1. <strong>Understanding the function structure</strong></a></h3>
+<p>The <code>elementwise</code> function expects a nested function with this exact signature:</p>
+<pre><code class="language-mojo">@parameter
+@always_inline
+def your_function[
+    simd_width: Int, alignment: Int = align_of[dtype]()
+](indices: Coord) capturing -&gt; None:
+    # Your implementation here
+</code></pre>
+<p><strong>Why each part matters:</strong></p>
+<ul>
+<li><code>@parameter</code>: Enables compile-time specialization for optimal GPU code
+generation</li>
+<li><code>@always_inline</code>: Forces inlining to eliminate function call overhead in GPU
+kernels</li>
+<li><code>capturing</code>: Allows access to variables from the outer scope (the input/output
+tensors)</li>
+<li><code>Coord</code>: Carries the per-dimension indices for the current SIMD chunk; use
+<code>indices[0]</code> for 1D operations</li>
+</ul>
+<h3 id="2-index-extraction-and-simd-processing"><a class="header" href="#2-index-extraction-and-simd-processing">2. <strong>Index extraction and SIMD processing</strong></a></h3>
+<pre><code class="language-mojo">var idx = Int(indices[0].value())  # Extract linear index for 1D operations
+</code></pre>
+<p>This <code>idx</code> represents the <strong>starting position</strong> for a SIMD vector, not a single
+element. If <code>SIMD_WIDTH=4</code> (GPU-dependent), then:</p>
+<ul>
+<li>Thread 0 processes elements <code>[0, 1, 2, 3]</code> starting at <code>idx=0</code></li>
+<li>Thread 1 processes elements <code>[4, 5, 6, 7]</code> starting at <code>idx=4</code></li>
+<li>Thread 2 processes elements <code>[8, 9, 10, 11]</code> starting at <code>idx=8</code></li>
+<li>And so on…</li>
+</ul>
+<h3 id="3-simd-loading-pattern"><a class="header" href="#3-simd-loading-pattern">3. <strong>SIMD loading pattern</strong></a></h3>
+<pre><code class="language-mojo">var a_simd = a_lt.aligned_load[width=simd_width](Index(idx))  # Load 4 consecutive floats (GPU-dependent)
+var b_simd = b_lt.aligned_load[width=simd_width](Index(idx))  # Load 4 consecutive floats (GPU-dependent)
+</code></pre>
+<p><code>aligned_load</code> is a <code>LayoutTensor</code> method, so the receivers are the <code>a_lt</code> /
+<code>b_lt</code> handles produced by <code>to_layout_tensor()</code> inside the kernel—not the
+<code>TileTensor</code> parameters. This loads a <strong>vectorized chunk</strong> of data in a single
+operation. The exact number of elements loaded depends on your GPU’s SIMD
+capabilities.</p>
+<h3 id="4-vector-arithmetic"><a class="header" href="#4-vector-arithmetic">4. <strong>Vector arithmetic</strong></a></h3>
+<pre><code class="language-mojo">var result = a_simd + b_simd  # SIMD addition of 4 elements simultaneously (GPU-dependent)
+</code></pre>
+<p>This performs element-wise addition across the entire SIMD vector (if supported)
+in parallel - much faster than 4 separate scalar additions.</p>
+<h3 id="5-simd-storing"><a class="header" href="#5-simd-storing">5. <strong>SIMD storing</strong></a></h3>
+<pre><code class="language-mojo">out_lt.store[simd_width](Index(idx), result)  # Store 4 results at once (GPU-dependent)
+</code></pre>
+<p>Writes the entire SIMD vector back to memory in one operation.</p>
+<h3 id="6-calling-the-elementwise-function"><a class="header" href="#6-calling-the-elementwise-function">6. <strong>Calling the elementwise function</strong></a></h3>
+<pre><code class="language-mojo">elementwise[your_function, SIMD_WIDTH, target="gpu"](total_size, ctx)
+</code></pre>
+<ul>
+<li><code>total_size</code> is the <code>size</code> compile-time parameter of the enclosing
+function—the template already passes it</li>
+<li><code>elementwise</code> sizes the grid itself and drives a grid-stride loop, so your
+function is invoked once per <code>SIMD_WIDTH</code>-wide chunk:
+<code>total_size // SIMD_WIDTH</code> invocations, spread over however many threads the
+GPU can keep busy</li>
+</ul>
+<h3 id="7-key-debugging-insight"><a class="header" href="#7-key-debugging-insight">7. <strong>Key debugging insight</strong></a></h3>
+<p>Add <code>print("idx:", idx)</code> to the nested function and re-run. You’ll see values
+like:</p>
+<pre><code class="language-text">idx: 0, idx: 4, idx: 8, idx: 12, ...
+</code></pre>
+<p>The values are multiples of <code>SIMD_WIDTH</code> (which is GPU-dependent), showing that
+each invocation handles a different SIMD chunk. The order they print in is
+arbitrary, since the threads run concurrently.</p>
+</div>
+</details>
+<h2 id="running-the-code"><a class="header" href="#running-the-code">Running the code</a></h2>
+<p>To test your solution, run the following command in your terminal:</p>
+<div class="code-tabs" data-tab-group="package-manager">
+  <div class="tab-buttons">
+    <button class="tab-button">pixi NVIDIA (default)</button>
+    <button class="tab-button">pixi AMD</button>
+    <button class="tab-button">pixi Apple</button>
+    <button class="tab-button">uv</button>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">pixi run p23 --elementwise
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">pixi run -e amd p23 --elementwise
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">pixi run -e apple p23 --elementwise
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">uv run poe p23 --elementwise
+</code></pre>
+  </div>
+</div>
+<p>Your output will look like this if the puzzle isn’t solved yet:</p>
+<pre><code class="language-txt">SIZE: 1024
+simd_width: 4
+out: HostBuffer([0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0])
+expected: HostBuffer([1.0, 5.0, 9.0, ..., 4085.0, 4089.0, 4093.0])
+</code></pre>
+<h2 id="solution"><a class="header" href="#solution">Solution</a></h2>
+<details class="solution-details">
+<summary></summary>
+<pre><code class="language-mojo">def elementwise_add[
+    LayoutT: TensorLayout, dtype: DType, simd_width: Int, rank: Int, size: Int
+](
+    output: TileTensor[mut=True, dtype, LayoutT, MutAnyOrigin],
+    a: TileTensor[mut=False, dtype, LayoutT, MutAnyOrigin],
+    b: TileTensor[mut=False, dtype, LayoutT, MutAnyOrigin],
+    ctx: DeviceContext,
+) raises:
+    @parameter
+    @always_inline
+    def add[
+        simd_width: Int, alignment: Int = align_of[dtype]()
+    ](indices: Coord) capturing -&gt; None:
+        var idx = Int(indices[0].value())
+        # Convert inside GPU kernel to avoid host-captured LayoutTensor issues
+        var a_lt = a.to_layout_tensor()
+        var b_lt = b.to_layout_tensor()
+        var out_lt = output.to_layout_tensor()
+        # Note: This is thread-local SIMD - each thread processes its own vector of data
+        # we'll later better see this hierarchy in Mojo:
+        # SIMD within threads, warp across threads, block across warps
+        var a_simd = a_lt.aligned_load[width=simd_width](Index(idx))
+        var b_simd = b_lt.aligned_load[width=simd_width](Index(idx))
+        var ret = a_simd + b_simd
+        out_lt.store[simd_width](Index(idx), ret)
+
+    elementwise[add, SIMD_WIDTH, target="gpu"](size, ctx)
+
+
+</code></pre>
+<div class="solution-explanation">
+<p>The elementwise functional pattern in Mojo introduces several fundamental
+concepts for modern GPU programming:</p>
+<h3 id="1-functional-abstraction-philosophy"><a class="header" href="#1-functional-abstraction-philosophy">1. <strong>Functional abstraction philosophy</strong></a></h3>
+<p>The <code>elementwise</code> function represents a paradigm shift from traditional GPU
+programming:</p>
+<p><strong>Traditional CUDA/HIP approach:</strong></p>
+<pre><code class="language-mojo"># Manual thread management
+var idx = thread_idx.x + block_idx.x * block_dim.x
+if idx &lt; size:
+    output[idx] = a[idx] + b[idx]  # Scalar operation
+</code></pre>
+<p><strong>Mojo functional approach:</strong></p>
+<pre><code class="language-mojo"># Automatic management + SIMD vectorization
+elementwise[add_function, simd_width, target="gpu"](size, ctx)
+</code></pre>
+<p><strong>What <code>elementwise</code> abstracts away:</strong></p>
+<ul>
+<li><strong>Thread grid configuration</strong>: No need to calculate block/grid dimensions</li>
+<li><strong>Tail handling</strong>: Elements left over when <code>SIMD_WIDTH</code> doesn’t divide the
+shape are re-invoked one at a time, with <code>width=1</code></li>
+<li><strong>Memory coalescing</strong>: Threads walk the array with a grid stride, so
+neighboring threads touch neighboring chunks</li>
+<li><strong>SIMD orchestration</strong>: Vectorization handled transparently</li>
+<li><strong>GPU target selection</strong>: Works across different GPU architectures</li>
+</ul>
+<h3 id="2-deep-dive-nested-function-architecture"><a class="header" href="#2-deep-dive-nested-function-architecture">2. <strong>Deep dive: nested function architecture</strong></a></h3>
+<pre><code class="language-mojo">@parameter
+@always_inline
+def add[
+    simd_width: Int, alignment: Int = align_of[dtype]()
+](indices: Coord) capturing -&gt; None:
+</code></pre>
+<p><strong>Parameter Analysis:</strong></p>
+<ul>
+<li><strong><code>@parameter</code></strong>: This decorator provides <strong>compile-time specialization</strong>. The
+function is generated separately for each unique <code>simd_width</code>, allowing
+aggressive optimization.</li>
+<li><strong><code>@always_inline</code></strong>: Critical for GPU performance - eliminates function call
+overhead by embedding the code directly into the kernel.</li>
+<li><strong><code>capturing</code></strong>: Enables <strong>lexical scoping</strong> - the inner function can access
+variables from the outer scope without explicit parameter passing.</li>
+<li><strong><code>Coord</code></strong>: Carries the per-dimension indices for the SIMD chunk being
+processed; <code>indices[0]</code> is the linear start position for 1D operations.</li>
+</ul>
+<h3 id="3-simd-execution-model-deep-dive"><a class="header" href="#3-simd-execution-model-deep-dive">3. <strong>SIMD execution model deep dive</strong></a></h3>
+<pre><code class="language-mojo">var idx = Int(indices[0].value())                            # Linear index: 0, 4, 8, 12... (GPU-dependent spacing)
+var a_lt = a.to_layout_tensor()                              # LayoutTensor views for vectorized access
+var b_lt = b.to_layout_tensor()
+var out_lt = output.to_layout_tensor()
+var a_simd = a_lt.aligned_load[width=simd_width](Index(idx))  # Load: [a[0:4], a[4:8], a[8:12]...] (4 elements per load)
+var b_simd = b_lt.aligned_load[width=simd_width](Index(idx))  # Load: [b[0:4], b[4:8], b[8:12]...] (4 elements per load)
+var ret = a_simd + b_simd                                    # SIMD: 4 additions in parallel (GPU-dependent)
+out_lt.store[simd_width](Index(idx), ret)                    # Store: 4 results simultaneously (GPU-dependent)
+</code></pre>
+<p><strong>Execution Hierarchy Visualization:</strong></p>
+<pre><code class="language-text">GPU Architecture:
+├── Grid (entire problem)
+│   ├── Block 1 (multiple warps)
+│   │   ├── Warp 1 (32 threads) --&gt; We'll learn about Warp in Part VII
+│   │   │   ├── Thread 1 → SIMD[4 elements]  ← Our focus (GPU-dependent width)
+│   │   │   ├── Thread 2 → SIMD[4 elements]
+│   │   │   └── ...
+│   │   └── Warp 2 (32 threads)
+│   └── Block 2 (multiple warps)
+</code></pre>
+<p><strong>For a 1024-element vector with SIMD_WIDTH=4 (example GPU):</strong></p>
+<ul>
+<li><strong>Total SIMD operations needed</strong>: 1024 ÷ 4 = 256</li>
+<li><strong>Body invocations</strong>: 256, one per SIMD chunk</li>
+<li><strong>Each invocation processes</strong>: Exactly 4 consecutive elements</li>
+<li><strong>Threads</strong>: However many <code>elementwise</code> decides it needs to saturate the
+GPU - the 256 chunks are handed out across that grid, so a thread may run the
+body once or several times</li>
+</ul>
+<p><strong>Note</strong>: SIMD width varies with the target’s vector register width and the data
+type. Current NVIDIA and AMD GPU targets report a 128-bit vector width, which
+gives <code>SIMD_WIDTH = 4</code> for <code>float32</code>.</p>
+<h3 id="4-memory-access-pattern-analysis"><a class="header" href="#4-memory-access-pattern-analysis">4. <strong>Memory access pattern analysis</strong></a></h3>
+<pre><code class="language-mojo">a_lt.aligned_load[width=simd_width](Index(idx))  # Coalesced memory access
+</code></pre>
+<p><strong>Memory Coalescing Benefits:</strong></p>
+<ul>
+<li><strong>Sequential access</strong>: Threads access consecutive memory locations</li>
+<li><strong>Cache optimization</strong>: Maximizes L1/L2 cache hit rates</li>
+<li><strong>Bandwidth utilization</strong>: Achieves near-theoretical memory bandwidth</li>
+<li><strong>Hardware efficiency</strong>: GPU memory controllers optimized for this pattern</li>
+</ul>
+<p><strong>Example for SIMD_WIDTH=4 (GPU-dependent):</strong></p>
+<pre><code class="language-text">Thread 0: loads a[0:4]   → bytes 0-15
+Thread 1: loads a[4:8]   → bytes 16-31
+Thread 2: loads a[8:12]  → bytes 32-47
+...
+Result: A 32-lane warp covers one contiguous 512-byte span, so the memory
+        controller fetches whole cache lines instead of scattered words
+</code></pre>
+<h3 id="5-performance-characteristics--optimization"><a class="header" href="#5-performance-characteristics--optimization">5. <strong>Performance characteristics &amp; optimization</strong></a></h3>
+<p><strong>Computational Intensity Analysis (for SIMD_WIDTH=4):</strong></p>
+<ul>
+<li><strong>Arithmetic operations</strong>: 1 SIMD addition per 4 elements</li>
+<li><strong>Memory operations</strong>: 2 SIMD loads + 1 SIMD store per 4 elements</li>
+<li><strong>Arithmetic intensity</strong>: 1 add ÷ 3 memory ops = 0.33 (memory-bound)</li>
+</ul>
+<p><strong>Why This Is Memory-Bound:</strong></p>
+<pre><code class="language-text">Memory bandwidth &gt;&gt;&gt; Compute capability for simple operations
+</code></pre>
+<p><strong>Optimization Implications:</strong></p>
+<ul>
+<li>Focus on memory access patterns rather than arithmetic optimization</li>
+<li>SIMD vectorization provides the primary performance benefit</li>
+<li>Memory coalescing is critical for performance</li>
+<li>Cache locality matters more than computational complexity</li>
+</ul>
+<h3 id="6-scaling-and-adaptability"><a class="header" href="#6-scaling-and-adaptability">6. <strong>Scaling and adaptability</strong></a></h3>
+<p><strong>Automatic Hardware Adaptation:</strong></p>
+<pre><code class="language-mojo">comptime SIMD_WIDTH = simd_width_of[dtype, target=get_gpu_target()]()
+</code></pre>
+<ul>
+<li><strong>GPU-specific optimization</strong>: SIMD width adapts to hardware - it is the
+target’s SIMD register width divided by the size of <code>dtype</code>, so a 128-bit
+vector register gives 4 for <code>float32</code> and 8 for <code>float16</code></li>
+<li><strong>Data type awareness</strong>: Different SIMD widths for float32 vs float16</li>
+<li><strong>Compile-time optimization</strong>: Zero runtime overhead for hardware detection</li>
+</ul>
+<p><strong>Scalability Properties:</strong></p>
+<ul>
+<li><strong>Thread count</strong>: Automatically scales with problem size</li>
+<li><strong>Memory usage</strong>: Linear scaling with input size</li>
+<li><strong>Performance</strong>: Near-linear speedup until memory bandwidth saturation</li>
+</ul>
+<h3 id="7-advanced-insights-why-this-pattern-matters"><a class="header" href="#7-advanced-insights-why-this-pattern-matters">7. <strong>Advanced insights: why this pattern matters</strong></a></h3>
+<p><strong>Foundation for Complex Operations:</strong>
+This elementwise pattern is the building block for:</p>
+<ul>
+<li><strong>Reduction operations</strong>: Sum, max, min across large arrays</li>
+<li><strong>Broadcast operations</strong>: Scalar-to-vector operations</li>
+<li><strong>Complex transformations</strong>: Activation functions, normalization</li>
+<li><strong>Multi-dimensional operations</strong>: Matrix operations, convolutions</li>
+</ul>
+<p><strong>Compared to Traditional Approaches:</strong></p>
+<pre><code class="language-cpp">// Traditional: error-prone, verbose, hardware-specific
+__global__ void add_kernel(float* output, float* a, float* b, int size) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx &lt; size) {
+        output[idx] = a[idx] + b[idx];  // No vectorization
+    }
+}
+</code></pre>
+<pre><code class="language-mojo"># Mojo: safe, concise, automatically vectorized
+elementwise[add, SIMD_WIDTH, target="gpu"](size, ctx)
+</code></pre>
+<p><strong>Benefits of Functional Approach:</strong></p>
+<ul>
+<li><strong>Safety</strong>: The tail is handled for you, so a shape that isn’t a multiple of
+<code>SIMD_WIDTH</code> doesn’t need a hand-written remainder branch</li>
+<li><strong>Portability</strong>: Same code works across GPU vendors/generations</li>
+<li><strong>Performance</strong>: Grid sizing and the SIMD width come from the target, so the
+same source adapts instead of being retuned by hand</li>
+<li><strong>Maintainability</strong>: Clean abstractions reduce debugging complexity</li>
+<li><strong>Composability</strong>: Easy to combine with other functional operations</li>
+</ul>
+<p>This pattern represents the future of GPU programming - high-level abstractions
+that don’t sacrifice performance, making GPU computing accessible while
+maintaining optimal efficiency.</p>
+</div>
+</details>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next steps</a></h2>
+<p>Once you’ve learned elementwise operations, you’re ready for:</p>
+<ul>
+<li><strong><a href="./tile.html">Tile Operations</a></strong>: Memory-efficient tiled processing patterns</li>
+<li><strong><a href="./vectorize.html">Vectorization</a></strong>: Fine-grained SIMD control</li>
+<li><strong><a href="./gpu-thread-vs-simd.html">🧠 GPU Threading vs SIMD</a></strong>: Understanding the
+execution hierarchy</li>
+<li><strong><a href="./benchmarking.html">📊 Benchmarking</a></strong>: Performance analysis and
+optimization</li>
+</ul>
+<p>💡 <strong>Key Takeaway</strong>: The <code>elementwise</code> pattern shows how Mojo combines
+functional programming elegance with GPU performance, automatically handling
+vectorization and thread management while maintaining full control over the
+computation.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../puzzle_23/puzzle_23.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../puzzle_23/tile.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../puzzle_23/puzzle_23.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../puzzle_23/tile.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/mojolang.js"></script>
+        <script src="../theme/sidebar.js"></script>
+        <script src="../theme/solution.js"></script>
+        <script src="../theme/init-amplitude.js"></script>
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/language-switcher.js"></script>
+
+
+    </div>
+    </body>
+</html>

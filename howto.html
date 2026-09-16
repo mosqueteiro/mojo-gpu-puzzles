@@ -1,0 +1,784 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>🧭 Puzzles Usage Guide - Mojo 🔥 GPU Puzzles</title>
+
+
+        <!-- Custom HTML head -->
+        <!-- Fonts + lottie-player are fetched from CDN (lottie-player pinned to a
+             fixed version). If a resource fails to load (e.g. no network access),
+             each falls back to a locally vendored copy in theme/vendor-cache/
+             (gitignored; populated by `pixi run fetch-offline-assets`, see
+             scripts/fetch_offline_assets.sh) — no build-time step or
+             version-controlled file swap involved. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+            onload="this.onload=null;this.rel='stylesheet'"
+            onerror="this.onerror=null;this.rel='stylesheet';this.href='theme/vendor-cache/fonts/roboto-mono.css'">
+        <noscript><link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"></noscript>
+        
+        <script defer src="https://unpkg.com/@lottiefiles/lottie-player@2.0.12/dist/lottie-player.js"
+            onerror="var s=document.createElement('script');s.src='theme/vendor-cache/lottie-player.js';document.head.appendChild(s);"></script>
+        
+        <link rel="stylesheet" href="theme/css/custom.css">
+        <link rel="stylesheet" href="theme/css/highlight.css">
+        <link rel="stylesheet" id="theme">
+        
+        <!-- Additional meta tags -->
+        <meta property="og:title" content="Mojo🔥 GPU Puzzles">
+        <meta property="og:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta property="og:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+        <meta property="og:url" content="https://puzzles.modular.com/">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:image:alt" content="Mojo GPU Puzzles Logo">
+        <meta name="twitter:title" content="Mojo🔥 GPU Puzzles">
+        <meta name="twitter:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta name="twitter:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+
+        <!-- Fetched from CDN; falls back to a locally vendored copy in
+             theme/vendor-cache/ (gitignored; see scripts/fetch_offline_assets.sh)
+             if it fails to load, e.g. no network access. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" onload="this.onload=null;this.rel='stylesheet'" onerror="this.onerror=null;this.rel='stylesheet';this.href='theme/vendor-cache/fonts/inter.css'">
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"></noscript>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/css/custom.css">
+        <link rel="stylesheet" href="theme/css/highlight.css">
+        <link rel="stylesheet" href="theme/css/tabs.css">
+        <link rel="stylesheet" href="theme/css/language-switcher.css">
+
+        <!--
+            MathJax locale fix: In non-English locales (e.g. lang="ko"), browsers apply CJK
+            font fallback to MathJax's font measurement div, causing incorrect bounding box
+            widths for long formulas. Fix: temporarily set lang="en" on <html> during
+            MathJax's entire startup, then restore the original lang. Individual .MathJax
+            elements keep lang="en" to prevent visual CJK font fallback.
+        -->
+        <script type="text/x-mathjax-config">
+            (function() {
+                var html = document.documentElement;
+                var origLang = html.getAttribute('lang');
+                if (origLang && origLang !== 'en') {
+                    html.setAttribute('lang', 'en');
+                    MathJax.Hub.Register.StartupHook("End", function() {
+                        html.setAttribute('lang', origLang);
+                        document.querySelectorAll('.MathJax, .MathJax_Display').forEach(function(el) {
+                            el.setAttribute('lang', 'en');
+                        });
+                    });
+                }
+            })();
+        </script>
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "ayu";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <button class="collapse-sidebar" aria-label="Collapse sidebar"></button>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Toggle color mode and talk to us buttons -->
+        <script>
+            document.addEventListener('click', function (event) {
+                if (!event.target.matches('.theme-toggle')) return;
+                event.preventDefault();
+                const prevTheme = theme;
+                html.classList.remove(theme);
+                const newTheme = prevTheme === 'ayu' ? 'light' : 'ayu'
+                html.classList.add(newTheme);
+                theme = newTheme
+                localStorage.setItem('mdbook-theme', theme);
+            }, false);
+            document.addEventListener('click', function() {
+                if (!event.target.matches('.log-in')) return;
+                event.preventDefault();
+                window.amplitude.logEvent('LoginClickedFromPuzzles');
+                window.open('https://developer.modular.com', '_blank');
+            });
+        </script>
+
+        <div class="page-header">
+            <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                <i class="fa fa-bars"></i>
+            </label>
+            <div id="menu-bar" class="menu-bar">
+                <div class="left-buttons">
+                    <div class="logo-section">
+                        <a class="desktop-logo-link" href="https://modular.com"></a>
+                        <a class="mobile-logo-link" href="https://builds.modular.com"></a>
+                        <div class="slash">/</div>
+                        <a class="internal-link" ref="/">Puzzles</a>
+                    </div>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Dark</button></li>
+                        </ul>
+                    </div>
+                <div class="right-buttons">
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <div id="language-switcher-placeholder"></div>
+                    <button id="theme-toggle" class="icon-button theme-toggle-btn" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="false" aria-expanded="false">
+                        <i class="theme-toggle"></i>
+                    </button>
+                    <a class="menu-btn print" href="print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a class="menu-btn" href="https://github.com/modular/mojo-gpu-puzzles" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+            <div class="page">
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="how-to-use-this-book"><a class="header" href="#how-to-use-this-book">How to Use This Book</a></h2>
+<p>Each puzzle maintains a consistent structure to support systematic skill
+development:</p>
+<ul>
+<li><strong>Overview</strong>: Problem definition and key concepts for each challenge</li>
+<li><strong>Configuration</strong>: Technical setup and memory organization details</li>
+<li><strong>Code to Complete</strong>: Implementation framework in <code>problems/pXX/</code> with clearly
+marked sections to fill in</li>
+<li><strong>Tips</strong>: Strategic hints available when needed, without revealing complete
+solutions</li>
+<li><strong>Solution</strong>: Comprehensive implementation analysis, including performance
+considerations and conceptual explanations</li>
+</ul>
+<p>The puzzles increase in complexity systematically, building new concepts on
+established foundations. Working through them sequentially is recommended, as
+advanced puzzles assume familiarity with concepts from earlier challenges.</p>
+<h2 id="running-the-code"><a class="header" href="#running-the-code">Running the code</a></h2>
+<p>All puzzles integrate with a testing framework that validates implementations
+against expected results. Each puzzle provides specific execution instructions
+and solution verification procedures.</p>
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<h3 id="system-requirements"><a class="header" href="#system-requirements">System requirements</a></h3>
+<p>Make sure your system meets our
+<a href="https://max.modular.com/packages/#system-requirements">system requirements</a>.</p>
+<h3 id="compatible-gpu"><a class="header" href="#compatible-gpu">Compatible GPU</a></h3>
+<p>You’ll need a
+<a href="https://max.modular.com/packages/#gpu-compatibility">compatible GPU</a> to run
+the puzzles. After setup, you can verify your GPU compatibility using the
+<code>gpu-specs</code> command (see
+<a href="#setting-up-your-environment">Setting up your environment</a>).</p>
+<h2 id="operating-system"><a class="header" href="#operating-system">Operating System</a></h2>
+<blockquote>
+<p><strong>Note:</strong> Here is some documentation how to setup GPU support in your OS for</p>
+<ul>
+<li><a href="#windows-wsl2-for-linux-with-nvidia">Windows WSL2 for Linux with NVIDIA</a></li>
+<li><a href="#linux-native-with-nvidia">Linux native with NVIDIA</a></li>
+<li><a href="#macos-apple-silicon">macOS Apple Silicon</a></li>
+</ul>
+</blockquote>
+<h3 id="windows-wsl2-for-linux-with-nvidia"><a class="header" href="#windows-wsl2-for-linux-with-nvidia">Windows WSL2 for Linux with NVIDIA</a></h3>
+<p>To setup NVIDIA GPU support on Windows Subsystem for Linux (WSL2) e.g. Ubuntu
+please follow the
+<a href="https://docs.nvidia.com/cuda/wsl-user-guide/index.html">NVIDIA CUDA on WSL Guide</a>.</p>
+<p>The important information is to install the NVIDIA Windows CUDA Driver for
+<em>Windows</em> because they fully support WSL2. Once a Windows NVIDIA GPU driver is
+installed on the system, CUDA becomes available within WSL 2. The CUDA driver
+installed on Windows host will be stubbed inside the WSL 2 as libcuda.so,
+therefore users must not install any NVIDIA GPU Linux driver within WSL 2.</p>
+<p>Once you have installed the drivers please test the installation</p>
+<p>Verify from Windows: Open PowerShell (not WSL)</p>
+<pre><code class="language-bash">nvidia-smi
+</code></pre>
+<p>Verify from inside WSL: (first start WSL e.g. via wsl -d Ubuntu)</p>
+<pre><code class="language-bash">ls -l /usr/lib/wsl/lib/nvidia-smi
+/usr/lib/wsl/lib/nvidia-smi
+</code></pre>
+<p>Check setup from Pixi optionally install missing requirements e.g. for cuda-gdb
+debugging</p>
+<pre><code class="language-bash">pixi run nvidia-smi
+pixi run setup-cuda-gdb
+pixi run mojo debug --help
+pixi run cuda-gdb --version
+</code></pre>
+<p>For WSL you can install VSCode as your Editor</p>
+<ul>
+<li>Install VS Code on Windows from
+<a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a>.</li>
+<li>Then install the Remote - WSL extension.</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> All 35 puzzles work on WSL and Linux with a supported NVIDIA GPU. Some
+puzzles require a minimum compute capability, and the debugging and profiling
+puzzles require the corresponding NVIDIA tools. See the
+<a href="#gpu-support-matrix">GPU support matrix</a>.</p>
+</blockquote>
+<h3 id="linux-native-with-nvidia"><a class="header" href="#linux-native-with-nvidia">Linux native with NVIDIA</a></h3>
+<p>Check GPU + Ubuntu version (Supported Ubuntu LTS: 20.04, 22.04, 24.04)</p>
+<pre><code class="language-bash">lspci | grep -i nvidia
+lsb_release -a
+</code></pre>
+<p>Install NVIDIA driver (mandatory)</p>
+<pre><code class="language-bash">sudo ubuntu-drivers devices
+sudo ubuntu-drivers autoinstall
+sudo reboot
+</code></pre>
+<p>For Linux you can install VSCode as your Editor</p>
+<ul>
+<li>Install VS Code in Linux via VS Code APT repository</li>
+</ul>
+<p>Import Microsoft GPG key</p>
+<pre><code class="language-bash">wget -qO- https://packages.microsoft.com/keys/microsoft.asc \
+  | gpg --dearmor \
+  | sudo tee /usr/share/keyrings/packages.microsoft.gpg &gt; /dev/null
+</code></pre>
+<p>Add VS Code APT repository</p>
+<pre><code class="language-bash">echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] \
+https://packages.microsoft.com/repos/code stable main" \
+| sudo tee /etc/apt/sources.list.d/vscode.list
+</code></pre>
+<p>Install VS Code and verify installation</p>
+<pre><code class="language-bash">sudo apt update
+sudo apt install code
+code --version
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> All 35 puzzles work on Linux with a supported NVIDIA GPU. Some puzzles
+require a minimum compute capability; puzzle 34 needs SM90 (Hopper) or
+newer. See the <a href="#gpu-support-matrix">GPU support matrix</a>.</p>
+</blockquote>
+<h3 id="macos-apple-silicon"><a class="header" href="#macos-apple-silicon">macOS Apple Silicon</a></h3>
+<p>For <code>osx-arm64</code> users, you’ll need:</p>
+<ul>
+<li><strong>macOS 15.0 or later</strong> for optimal compatibility. Run
+<code>pixi run -e apple check-macos</code> and if it fails you’d need to upgrade.</li>
+<li><strong>Xcode 16 or later</strong> (minimum required). Use <code>xcodebuild -version</code> to check.</li>
+</ul>
+<p>If <code>xcrun -sdk macosx metal</code> outputs
+<code>cannot execute tool 'metal' due to missing Metal toolchain</code> proceed by running</p>
+<pre><code class="language-bash">xcodebuild -downloadComponent MetalToolchain
+</code></pre>
+<p>and then <code>xcrun -sdk macosx metal</code>, should give you the <code>no input files error</code>.</p>
+<blockquote>
+<p><strong>Note:</strong> Puzzles 1-8, 11-19, 23-28, and 35 work on macOS (24 of the 35). The
+remainder need NVIDIA-specific tooling, hardware, or PyTorch GPU support.
+See the <a href="#gpu-support-matrix">GPU support matrix</a>. We’re working to enable
+more. Please stay tuned!</p>
+</blockquote>
+<h2 id="programming-knowledge"><a class="header" href="#programming-knowledge">Programming knowledge</a></h2>
+<p>Basic knowledge of:</p>
+<ul>
+<li>Programming fundamentals (variables, loops, conditionals, functions)</li>
+<li>Parallel computing concepts (threads, synchronization, race conditions)</li>
+<li>Basic familiarity with <a href="https://mojolang.org/docs/manual/">Mojo</a> (language
+basics parts and
+<a href="https://mojolang.org/docs/manual/pointers/">intro to pointers</a> section)</li>
+<li><a href="https://max.modular.com/gpu/fundamentals/">GPU programming fundamentals</a>
+is helpful!</li>
+</ul>
+<p>No prior GPU programming experience is necessary! We’ll build that knowledge
+through the puzzles.</p>
+<p>Let’s begin our journey into the exciting world of GPU computing with Mojo🔥!</p>
+<h2 id="setting-up-your-environment"><a class="header" href="#setting-up-your-environment">Setting up your environment</a></h2>
+<ol>
+<li>
+<p><a href="https://github.com/modular/mojo-gpu-puzzles">Clone the GitHub repository</a>
+and navigate to the repository:</p>
+<pre><code class="language-bash"># Clone the stable branch, which matches this book
+git clone --branch stable https://github.com/modular/mojo-gpu-puzzles
+cd mojo-gpu-puzzles
+</code></pre>
+<p>The <code>stable</code> branch is what
+<a href="https://puzzles.modular.com">puzzles.modular.com</a> is built from, and it
+is pinned to the current MAX release. The repository’s default branch,
+<code>main</code>, tracks nightly builds instead, so cloning it gives you puzzle code
+that may not compile against the release toolchain these instructions
+install. If you want to contribute a change, see
+<a href="#development">Development</a>.</p>
+</li>
+<li>
+<p>Install a package manager to run the Mojo🔥 programs:</p>
+</li>
+</ol>
+<h3 id="option-1-highly-recommended"><a class="header" href="#option-1-highly-recommended"><strong>Option 1 (Highly recommended)</strong></a></h3>
+<p><a href="https://pixi.sh/latest/#installation">pixi</a></p>
+<p><code>pixi</code> is the <strong>recommended option</strong> for this project because:</p>
+<ul>
+<li>Easy access to Modular’s MAX/Mojo packages</li>
+<li>Handles GPU dependencies</li>
+<li>Full conda + PyPI ecosystem support</li>
+</ul>
+<blockquote>
+<p><strong>Note: Some puzzles only work with <code>pixi</code></strong></p>
+</blockquote>
+<p><strong>Install:</strong></p>
+<pre><code class="language-bash">curl -fsSL https://pixi.sh/install.sh | sh
+</code></pre>
+<p><strong>Update:</strong></p>
+<pre><code class="language-bash">pixi self-update
+</code></pre>
+<h3 id="option-2-uv"><a class="header" href="#option-2-uv"><strong>Option 2</strong>: <a href="https://docs.astral.sh/uv/getting-started/installation/"><code>uv</code></a></a></h3>
+<p><strong>Install:</strong></p>
+<pre><code class="language-bash">curl -fsSL https://astral.sh/uv/install.sh | sh
+</code></pre>
+<p><strong>Update:</strong></p>
+<pre><code class="language-bash">uv self update
+</code></pre>
+<p><strong>Create a virtual environment:</strong></p>
+<pre><code class="language-bash">uv venv &amp;&amp; source .venv/bin/activate
+</code></pre>
+<ol start="3">
+<li><strong>Verify setup and run your first puzzle:</strong></li>
+</ol>
+<div class="code-tabs" data-tab-group="package-manager">
+  <div class="tab-buttons">
+    <button class="tab-button">pixi NVIDIA (default)</button>
+    <button class="tab-button">pixi AMD</button>
+    <button class="tab-button">pixi Apple</button>
+    <button class="tab-button">uv</button>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash"># Check your GPU specifications
+pixi run gpu-specs
+
+# Run your first puzzle
+# This fails waiting for your implementation! follow the content
+pixi run p01
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash"># Check your GPU specifications
+pixi run -e amd gpu-specs
+
+# Run your first puzzle
+# This fails waiting for your implementation! follow the content
+pixi run -e amd p01
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash"># Check your GPU specifications
+pixi run -e apple gpu-specs
+
+# Run your first puzzle
+# This fails waiting for your implementation! follow the content
+pixi run -e apple p01
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash"># Install GPU-specific dependencies
+uv pip install -e ".[nvidia]"  # For NVIDIA GPUs
+# OR
+uv pip install -e ".[amd]"     # For AMD GPUs
+
+# Check your GPU specifications
+uv run poe gpu-specs
+
+# Run your first puzzle
+# This fails waiting for your implementation! follow the content
+uv run poe p01
+</code></pre>
+  </div>
+</div>
+<h2 id="working-with-puzzles"><a class="header" href="#working-with-puzzles">Working with puzzles</a></h2>
+<h3 id="project-structure"><a class="header" href="#project-structure">Project structure</a></h3>
+<ul>
+<li><strong><a href="https://github.com/modular/mojo-gpu-puzzles/tree/stable/problems"><code>problems/</code></a></strong>:
+Where you implement your solutions (this is where you work!)</li>
+<li><strong><a href="https://github.com/modular/mojo-gpu-puzzles/tree/stable/solutions"><code>solutions/</code></a></strong>:
+Reference solutions for comparison and learning that we use throughout the
+book</li>
+</ul>
+<p>These links point at the <code>stable</code> branch, matching the clone instructions
+above. Browsing <code>main</code> instead shows nightly code that can differ from what
+this book describes.</p>
+<h3 id="workflow"><a class="header" href="#workflow">Workflow</a></h3>
+<ol>
+<li>Navigate to <code>problems/pXX/</code> to find the puzzle template</li>
+<li>Implement your solution in the provided framework</li>
+<li>Test your implementation: <code>pixi run pXX</code> or <code>uv run poe pXX</code> (remember to
+include your platform with <code>-e platform</code> such as <code>-e amd</code>)</li>
+<li>Compare with <code>solutions/pXX/</code> to learn different approaches</li>
+</ol>
+<h3 id="essential-commands"><a class="header" href="#essential-commands">Essential commands</a></h3>
+<div class="code-tabs" data-tab-group="package-manager">
+  <div class="tab-buttons">
+    <button class="tab-button">pixi</button>
+    <button class="tab-button">uv</button>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash"># The NVIDIA environment is the default. On an AMD or Apple GPU, add
+# `-e amd` or `-e apple` to every `pixi run` and `pixi shell` below.
+
+# Run puzzles
+pixi run pXX             # NVIDIA (default) same as `pixi run -e nvidia pXX`
+pixi run -e amd pXX      # AMD GPU
+pixi run -e apple pXX    # Apple GPU
+
+# Test solutions
+pixi run tests           # Test all solutions
+pixi run tests pXX       # Test specific puzzle
+
+# Run manually
+pixi run mojo problems/pXX/pXX.mojo     # Your implementation
+pixi run mojo solutions/pXX/pXX.mojo    # Reference solution
+
+# Interactive shell
+pixi shell               # Enter environment
+mojo problems/p01/p01.mojo              # Direct execution
+exit                     # Leave shell
+
+# Development
+pixi run format         # Format code
+pixi task list          # Available commands
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash"># Note: uv is limited and some chapters require pixi
+# Install GPU-specific dependencies:
+uv pip install -e ".[nvidia]"  # For NVIDIA GPUs
+uv pip install -e ".[amd]"     # For AMD GPUs
+
+# Test solutions
+uv run poe tests        # Test all solutions
+uv run poe tests pXX    # Test specific puzzle
+
+# Run manually
+uv run mojo problems/pXX/pXX.mojo      # Your implementation
+uv run mojo solutions/pXX/pXX.mojo     # Reference solution
+</code></pre>
+  </div>
+</div>
+<h2 id="gpu-support-matrix"><a class="header" href="#gpu-support-matrix">GPU support matrix</a></h2>
+<p>The following table shows GPU platform compatibility for each puzzle. Different
+puzzles require different GPU features and vendor-specific tools.</p>
+<div class="table-wrapper"><table><thead><tr><th>Puzzle</th><th>NVIDIA GPU</th><th>AMD GPU</th><th>Apple GPU</th><th>Notes</th></tr></thead><tbody>
+<tr><td><strong>Part I: GPU Fundamentals</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>1 - Map</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>2 - Zip</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>3 - Guards</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>4 - 2D Map</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>5 - Broadcast</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>6 - Blocks</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>7 - 2D Blocks</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>8 - Shared Memory</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td><strong>Part II: Debugging</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>9 - GPU Debugger</td><td>✅</td><td>❌</td><td>❌</td><td>NVIDIA-specific debugging tools</td></tr>
+<tr><td>10 - Sanitizer</td><td>✅</td><td>❌</td><td>❌</td><td>NVIDIA-specific debugging tools</td></tr>
+<tr><td><strong>Part III: GPU Algorithms</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>11 - Pooling</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>12 - Dot Product</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>13 - 1D Convolution</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>14 - Prefix Sum</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>15 - Axis Sum</td><td>✅</td><td>✅</td><td>✅</td><td>Basic GPU kernels</td></tr>
+<tr><td>16 - Matrix Multiplication</td><td>✅</td><td>✅</td><td>✅</td><td>Advanced memory patterns</td></tr>
+<tr><td><strong>Part IV: MAX Graph</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>17 - Custom Op</td><td>✅</td><td>✅</td><td>✅</td><td>MAX Graph integration</td></tr>
+<tr><td>18 - Softmax</td><td>✅</td><td>✅</td><td>✅</td><td>MAX Graph integration</td></tr>
+<tr><td>19 - Attention</td><td>✅</td><td>✅</td><td>✅</td><td>MAX Graph integration</td></tr>
+<tr><td><strong>Part V: PyTorch Integration</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>20 - 1D Convolution Op</td><td>✅</td><td>✅</td><td>❌</td><td>PyTorch integration</td></tr>
+<tr><td>21 - Embedding Op</td><td>✅</td><td>✅</td><td>❌</td><td>PyTorch integration</td></tr>
+<tr><td>22 - Fusion</td><td>✅</td><td>✅</td><td>❌</td><td>PyTorch integration</td></tr>
+<tr><td><strong>Part VI: Functional Patterns</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>23 - Functional</td><td>✅</td><td>✅</td><td>✅</td><td>Advanced Mojo patterns</td></tr>
+<tr><td><strong>Part VII: Warp Programming</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>24 - Warp Sum</td><td>✅</td><td>✅</td><td>✅</td><td>Warp-level operations</td></tr>
+<tr><td>25 - Warp Communication</td><td>✅</td><td>✅</td><td>✅</td><td>Warp-level operations</td></tr>
+<tr><td>26 - Advanced Warp</td><td>✅</td><td>✅</td><td>✅</td><td>Warp-level operations</td></tr>
+<tr><td><strong>Part VIII: Block Programming</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>27 - Block Operations</td><td>✅</td><td>✅</td><td>✅</td><td>Block-level patterns</td></tr>
+<tr><td><strong>Part IX: Memory Systems</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>28 - Async Memory</td><td>✅</td><td>✅</td><td>✅</td><td>Advanced memory operations</td></tr>
+<tr><td>29 - Barriers</td><td>✅</td><td>❌</td><td>❌</td><td>Advanced NVIDIA-only synchronization</td></tr>
+<tr><td><strong>Part X: Performance Analysis</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>30 - Profiling</td><td>✅</td><td>❌</td><td>❌</td><td>NVIDIA profiling tools (Nsight)</td></tr>
+<tr><td>31 - Occupancy</td><td>✅</td><td>❌</td><td>❌</td><td>NVIDIA profiling tools</td></tr>
+<tr><td>32 - Bank Conflicts</td><td>✅</td><td>❌</td><td>❌</td><td>NVIDIA profiling tools</td></tr>
+<tr><td><strong>Part XI: Modern GPU Features</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>33 - Tensor Cores</td><td>✅</td><td>❌</td><td>❌</td><td>NVIDIA Tensor Core specific</td></tr>
+<tr><td>34 - Cluster</td><td>✅</td><td>❌</td><td>❌</td><td>NVIDIA cluster programming</td></tr>
+<tr><td><strong>Part XII: Memory Alignment</strong></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>35 - Memory Alignment</td><td>✅</td><td>✅</td><td>✅</td><td>Aligned vectorized load/store</td></tr>
+</tbody></table>
+</div>
+<h3 id="legend"><a class="header" href="#legend">Legend</a></h3>
+<ul>
+<li>✅ <strong>Supported</strong>: Puzzle works on this platform</li>
+<li>❌ <strong>Not Supported</strong>: Puzzle requires platform-specific features</li>
+</ul>
+<h3 id="platform-notes"><a class="header" href="#platform-notes">Platform notes</a></h3>
+<p><strong>NVIDIA GPUs (Complete Support)</strong></p>
+<ul>
+<li>All puzzles (1-35) work on NVIDIA GPUs with CUDA support</li>
+<li>Requires CUDA toolkit and compatible drivers</li>
+<li>Best learning experience with access to all features</li>
+</ul>
+<p><strong>AMD GPUs (Extensive Support)</strong></p>
+<ul>
+<li>Most puzzles (1-8, 11-28, 35) work with ROCm support, 27 of the 35</li>
+<li>Missing only: Debugging tools (9-10), barriers (29), profiling (30-32),
+Tensor Cores (33), cluster programming (34)</li>
+<li>Excellent for learning GPU programming including advanced algorithms and
+memory patterns</li>
+</ul>
+<p><strong>Apple GPUs (Substantial Support)</strong></p>
+<ul>
+<li>Fundamental (1-8, 11-19), advanced (23-28), and memory alignment (35)
+puzzles are supported, 24 of the 35</li>
+<li>Missing: Debugging tools (9-10), PyTorch integration (20-22), barriers (29),
+profiling (30-32), Tensor Cores (33), cluster programming (34)</li>
+<li>Covers everything up to and including warp and block operations and
+asynchronous memory patterns</li>
+</ul>
+<blockquote>
+<p><strong>Future Support</strong>: We’re actively working to expand tooling and platform
+support for AMD and Apple GPUs. Missing features like debugging tools,
+profiling capabilities, and advanced GPU operations are planned for future
+releases. Check back for updates as we continue to broaden cross-platform
+compatibility.</p>
+</blockquote>
+<h2 id="gpu-resources"><a class="header" href="#gpu-resources">GPU Resources</a></h2>
+<h3 id="free-cloud-gpu-platforms"><a class="header" href="#free-cloud-gpu-platforms">Free cloud GPU platforms</a></h3>
+<p>If you don’t have local GPU access, several cloud platforms offer free GPU
+resources for learning and experimentation:</p>
+<h4 id="google-colab"><a class="header" href="#google-colab"><strong>Google Colab</strong></a></h4>
+<p>Google Colab provides free GPU access with some limitations for Mojo GPU
+programming:</p>
+<p><strong>Available GPUs:</strong></p>
+<ul>
+<li>Tesla T4 (older Turing architecture)</li>
+<li>Tesla V100 (limited availability)</li>
+</ul>
+<p><strong>Limitations for Mojo GPU Puzzles:</strong></p>
+<ul>
+<li><strong>Older GPU architecture</strong>: T4 GPUs may have limited compatibility with
+advanced Mojo GPU features</li>
+<li><strong>Session limits</strong>: 12-hour maximum runtime, then automatic disconnect</li>
+<li><strong>Tooling-dependent puzzles</strong>: Puzzles 9, 10 and 30-32 drive external NVIDIA
+tools rather than GPU features. <code>compute-sanitizer</code> (9, 10) comes with the
+environment. Profiling with <code>ncu</code> (30-32) needs GPU performance-counter
+access, which shared platforms often restrict, and <code>nsys</code> (30, 31) needs a
+system CUDA installation. Interactive debugging with <code>cuda-gdb</code> (9) expects a
+terminal rather than a notebook cell</li>
+<li><strong>Compute capability limits</strong>: T4 is compute capability 7.5, so puzzles
+requiring 8.0 (16, 28, 29, 33) and 9.0 (34) won’t run</li>
+<li><strong>Package installation restrictions</strong>: May require workarounds for Mojo/MAX
+installation</li>
+<li><strong>Performance limitations</strong>: Shared infrastructure affects consistent
+benchmarking</li>
+</ul>
+<p><strong>Recommended for:</strong> Most of the curriculum. On a compute-capability-7.5 GPU
+every puzzle runs except 16, 28, 29 and 33 (which need 8.0) and 34 (which needs
+9.0); the tooling-dependent puzzles above depend on what your environment
+exposes.</p>
+<h4 id="kaggle-notebooks"><a class="header" href="#kaggle-notebooks"><strong>Kaggle Notebooks</strong></a></h4>
+<p>Kaggle offers more generous free GPU access:</p>
+<p><strong>Available GPUs:</strong></p>
+<ul>
+<li>Tesla T4 (30 hours per week free)</li>
+<li>P100 (limited availability)</li>
+</ul>
+<p><strong>Advantages over Colab:</strong></p>
+<ul>
+<li><strong>More generous time limits</strong>: 30 hours per week compared to Colab’s daily
+session limits</li>
+<li><strong>Better persistence</strong>: Notebooks save automatically</li>
+<li><strong>Consistent environment</strong>: More reliable package installation</li>
+</ul>
+<p><strong>Limitations for Mojo GPU Puzzles:</strong></p>
+<ul>
+<li><strong>Same GPU architecture constraints</strong>: T4 compatibility issues with advanced
+features</li>
+<li><strong>Tooling-dependent puzzles</strong>: Puzzles 9, 10 and 30-32 drive external NVIDIA
+tools rather than GPU features. <code>compute-sanitizer</code> (9, 10) comes with the
+environment. Profiling with <code>ncu</code> (30-32) needs GPU performance-counter
+access, which shared platforms often restrict, and <code>nsys</code> (30, 31) needs a
+system CUDA installation. Interactive debugging with <code>cuda-gdb</code> (9) expects a
+terminal rather than a notebook cell</li>
+<li><strong>Mojo installation complexity</strong>: Requires manual setup of Mojo environment</li>
+<li><strong>Compute capability limits</strong>: T4 is compute capability 7.5, so puzzles
+requiring 8.0 (16, 28, 29, 33) and 9.0 (34) won’t run</li>
+</ul>
+<p><strong>Recommended for:</strong> Extended learning sessions across most of the curriculum.
+On a compute-capability-7.5 GPU every puzzle runs except 16, 28, 29 and 33
+(which need 8.0) and 34 (which needs 9.0); the tooling-dependent puzzles above
+depend on what your environment exposes.</p>
+<h3 id="recommendations"><a class="header" href="#recommendations">Recommendations</a></h3>
+<ul>
+<li><strong>Complete Learning Path</strong>: Use NVIDIA GPU for full curriculum access (all 35
+puzzles)</li>
+<li><strong>Comprehensive Learning</strong>: AMD GPUs work well for most content (27 of 35
+puzzles)</li>
+<li><strong>Broad Coverage</strong>: Apple GPUs cover fundamental through advanced concepts
+(24 of 35 puzzles)</li>
+<li><strong>Free Platform Learning</strong>: Google Colab/Kaggle cover most of the curriculum.
+Their T4 GPUs are compute capability 7.5, which rules out only puzzles 16,
+28, 29, 33 (8.0) and 34 (9.0); the debugging and profiling puzzles depend on
+the tooling each platform exposes</li>
+<li><strong>Debugging &amp; Profiling</strong>: NVIDIA GPU required for debugging tools and
+performance analysis</li>
+<li><strong>Modern GPU Features</strong>: NVIDIA GPU required for Tensor Cores and cluster
+programming</li>
+</ul>
+<h2 id="development"><a class="header" href="#development">Development</a></h2>
+<p>This section is for contributing changes to the puzzles themselves, not for
+solving them. Contributions target the <code>main</code> branch, which tracks nightly
+builds, rather than the <code>stable</code> branch you cloned to work through the book.
+For the build, test, and pull request workflow, see
+<a href="https://github.com/modular/mojo-gpu-puzzles#development">Development in the README</a>.</p>
+<h2 id="join-the-community"><a class="header" href="#join-the-community">Join the community</a></h2>
+<p align="center" style="display: flex; justify-content: center; gap: 10px;">
+  <a href="https://max.modular.com/get-started/#stay-in-touch">
+    <img src="https://img.shields.io/badge/Subscribe-Updates-00B5AD?logo=mail.ru" alt="Subscribe for Updates">
+  </a>
+  <a href="https://forum.modular.com/c/">
+    <img src="https://img.shields.io/badge/Modular-Forum-9B59B6?logo=discourse" alt="Modular Forum">
+  </a>
+  <a href="https://discord.gg/modular">
+    <img src="https://img.shields.io/badge/Discord-Join_Chat-5865F2?logo=discord" alt="Discord">
+  </a>
+</p>
+<p>Join our vibrant community to discuss GPU programming, share solutions, and get
+help!</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="reward.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="reward.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="theme/mojolang.js"></script>
+        <script src="theme/sidebar.js"></script>
+        <script src="theme/solution.js"></script>
+        <script src="theme/init-amplitude.js"></script>
+        <script src="theme/tabs.js"></script>
+        <script src="theme/language-switcher.js"></script>
+
+
+    </div>
+    </body>
+</html>

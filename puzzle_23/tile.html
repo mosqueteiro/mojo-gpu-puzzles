@@ -1,0 +1,658 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>tile - Memory-Efficient Tiled Processing - Mojo 🔥 GPU Puzzles</title>
+
+
+        <!-- Custom HTML head -->
+        <!-- Fonts + lottie-player are fetched from CDN (lottie-player pinned to a
+             fixed version). If a resource fails to load (e.g. no network access),
+             each falls back to a locally vendored copy in theme/vendor-cache/
+             (gitignored; populated by `pixi run fetch-offline-assets`, see
+             scripts/fetch_offline_assets.sh) — no build-time step or
+             version-controlled file swap involved. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+            onload="this.onload=null;this.rel='stylesheet'"
+            onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/roboto-mono.css'">
+        <noscript><link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"></noscript>
+        
+        <script defer src="https://unpkg.com/@lottiefiles/lottie-player@2.0.12/dist/lottie-player.js"
+            onerror="var s=document.createElement('script');s.src='../theme/vendor-cache/lottie-player.js';document.head.appendChild(s);"></script>
+        
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" id="theme">
+        
+        <!-- Additional meta tags -->
+        <meta property="og:title" content="Mojo🔥 GPU Puzzles">
+        <meta property="og:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta property="og:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+        <meta property="og:url" content="https://puzzles.modular.com/">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:image:alt" content="Mojo GPU Puzzles Logo">
+        <meta name="twitter:title" content="Mojo🔥 GPU Puzzles">
+        <meta name="twitter:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta name="twitter:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+
+        <!-- Fetched from CDN; falls back to a locally vendored copy in
+             theme/vendor-cache/ (gitignored; see scripts/fetch_offline_assets.sh)
+             if it fails to load, e.g. no network access. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" onload="this.onload=null;this.rel='stylesheet'" onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/inter.css'">
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"></noscript>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" href="../theme/css/tabs.css">
+        <link rel="stylesheet" href="../theme/css/language-switcher.css">
+
+        <!--
+            MathJax locale fix: In non-English locales (e.g. lang="ko"), browsers apply CJK
+            font fallback to MathJax's font measurement div, causing incorrect bounding box
+            widths for long formulas. Fix: temporarily set lang="en" on <html> during
+            MathJax's entire startup, then restore the original lang. Individual .MathJax
+            elements keep lang="en" to prevent visual CJK font fallback.
+        -->
+        <script type="text/x-mathjax-config">
+            (function() {
+                var html = document.documentElement;
+                var origLang = html.getAttribute('lang');
+                if (origLang && origLang !== 'en') {
+                    html.setAttribute('lang', 'en');
+                    MathJax.Hub.Register.StartupHook("End", function() {
+                        html.setAttribute('lang', origLang);
+                        document.querySelectorAll('.MathJax, .MathJax_Display').forEach(function(el) {
+                            el.setAttribute('lang', 'en');
+                        });
+                    });
+                }
+            })();
+        </script>
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "ayu";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <button class="collapse-sidebar" aria-label="Collapse sidebar"></button>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Toggle color mode and talk to us buttons -->
+        <script>
+            document.addEventListener('click', function (event) {
+                if (!event.target.matches('.theme-toggle')) return;
+                event.preventDefault();
+                const prevTheme = theme;
+                html.classList.remove(theme);
+                const newTheme = prevTheme === 'ayu' ? 'light' : 'ayu'
+                html.classList.add(newTheme);
+                theme = newTheme
+                localStorage.setItem('mdbook-theme', theme);
+            }, false);
+            document.addEventListener('click', function() {
+                if (!event.target.matches('.log-in')) return;
+                event.preventDefault();
+                window.amplitude.logEvent('LoginClickedFromPuzzles');
+                window.open('https://developer.modular.com', '_blank');
+            });
+        </script>
+
+        <div class="page-header">
+            <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                <i class="fa fa-bars"></i>
+            </label>
+            <div id="menu-bar" class="menu-bar">
+                <div class="left-buttons">
+                    <div class="logo-section">
+                        <a class="desktop-logo-link" href="https://modular.com"></a>
+                        <a class="mobile-logo-link" href="https://builds.modular.com"></a>
+                        <div class="slash">/</div>
+                        <a class="internal-link" ref="/">Puzzles</a>
+                    </div>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Dark</button></li>
+                        </ul>
+                    </div>
+                <div class="right-buttons">
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <div id="language-switcher-placeholder"></div>
+                    <button id="theme-toggle" class="icon-button theme-toggle-btn" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="false" aria-expanded="false">
+                        <i class="theme-toggle"></i>
+                    </button>
+                    <a class="menu-btn print" href="../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a class="menu-btn" href="https://github.com/modular/mojo-gpu-puzzles" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+            <div class="page">
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="tile---memory-efficient-tiled-processing"><a class="header" href="#tile---memory-efficient-tiled-processing">Tile - Memory-Efficient Tiled Processing</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Building on the <strong>elementwise</strong> pattern, this puzzle introduces
+<strong>tiled processing</strong> - a fundamental technique for optimizing memory access
+patterns and cache utilization on GPUs. Instead of each thread processing
+individual SIMD vectors across the entire array, tiling organizes data into
+smaller, manageable chunks that fit better in cache memory.</p>
+<p>You’ve already seen tiling in action with
+<strong><a href="../puzzle_16/tiled.html">Puzzle 16’s tiled matrix multiplication</a></strong>, where we
+used tiles to process large matrices efficiently. Here, we apply the same tiling
+principles to vector operations, demonstrating how this technique scales from 2D
+matrices to 1D arrays.</p>
+<p>Implement the same vector addition operation using Mojo’s tiled approach. Each
+GPU thread will process an entire tile of data sequentially, demonstrating how
+memory locality can improve performance for certain workloads.</p>
+<p><strong>Key insight:</strong> <em>Tiling trades parallel breadth for memory locality - fewer
+threads each doing more work with better cache utilization.</em></p>
+<h2 id="key-concepts"><a class="header" href="#key-concepts">Key concepts</a></h2>
+<p>In this puzzle, you’ll learn:</p>
+<ul>
+<li><strong>Tile-based memory organization</strong> for cache optimization</li>
+<li><strong>Sequential processing</strong> within tiles</li>
+<li><strong>Memory locality principles</strong> and cache-friendly access patterns</li>
+<li><strong>Thread-to-tile mapping</strong> vs thread-to-element mapping</li>
+<li><strong>Performance trade-offs</strong> between parallelism and memory efficiency</li>
+</ul>
+<p>The same mathematical operation as elementwise:
+\[\Large \text{output}[i] = a[i] + b[i]\]</p>
+<p>But with a completely different execution strategy optimized for memory
+hierarchy.</p>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<ul>
+<li>Vector size: <code>SIZE = 1024</code></li>
+<li>Tile size: <code>TILE_SIZE = 32</code></li>
+<li>Data type: <code>DType.float32</code></li>
+<li>SIMD width: GPU-dependent</li>
+<li>Layout: <code>row_major[SIZE]()</code> (1D row-major)</li>
+</ul>
+<h2 id="code-to-complete"><a class="header" href="#code-to-complete">Code to complete</a></h2>
+<pre><code class="language-mojo">comptime TILE_SIZE = 32
+
+
+def tiled_elementwise_add[
+    LayoutT: TensorLayout,
+    dtype: DType,
+    simd_width: Int,
+    rank: Int,
+    size: Int,
+    tile_size: Int,
+](
+    output: TileTensor[mut=True, dtype, LayoutT, MutAnyOrigin],
+    a: TileTensor[mut=False, dtype, LayoutT, MutAnyOrigin],
+    b: TileTensor[mut=False, dtype, LayoutT, MutAnyOrigin],
+    ctx: DeviceContext,
+) raises:
+    @parameter
+    @always_inline
+    def process_tiles[
+        simd_width: Int, alignment: Int = align_of[dtype]()
+    ](indices: Coord) capturing -&gt; None:
+        var tile_id = Int(indices[0].value())
+
+        var output_tile = output.tile[tile_size](tile_id).to_layout_tensor()
+        var a_tile = a.tile[tile_size](tile_id).to_layout_tensor()
+        var b_tile = b.tile[tile_size](tile_id).to_layout_tensor()
+
+        # FILL IN (6 lines at most)
+
+    var num_tiles = (size + tile_size - 1) // tile_size
+    elementwise[process_tiles, 1, target="gpu"](num_tiles, ctx)
+
+
+</code></pre>
+<p><a href="https://github.com/modular/mojo-gpu-puzzles/blob/main/problems/p23/p23.mojo" class="filename">View full file: problems/p23/p23.mojo</a></p>
+<details>
+<summary><strong>Tips</strong></summary>
+<div class="solution-tips">
+<h3 id="1-understanding-tile-organization"><a class="header" href="#1-understanding-tile-organization">1. <strong>Understanding tile organization</strong></a></h3>
+<p>The tiled approach divides your data into fixed-size chunks:</p>
+<pre><code class="language-mojo">var num_tiles = (size + tile_size - 1) // tile_size  # Ceiling division
+</code></pre>
+<p>For a 1024-element vector with <code>TILE_SIZE=32</code>: <code>1024 ÷ 32 = 32</code> tiles exactly.</p>
+<h3 id="2-tile-extraction-pattern"><a class="header" href="#2-tile-extraction-pattern">2. <strong>Tile extraction pattern</strong></a></h3>
+<p>Check out the
+<a href="https://max.modular.com/api/mojo/layout/tile_tensor/TileTensor/#tile">TileTensor <code>.tile</code> documentation</a>.</p>
+<pre><code class="language-mojo">var tile_id = Int(indices[0].value())  # Each thread gets one tile to process
+var output_tile = output.tile[tile_size](tile_id).to_layout_tensor()
+var a_tile = a.tile[tile_size](tile_id).to_layout_tensor()
+var b_tile = b.tile[tile_size](tile_id).to_layout_tensor()
+</code></pre>
+<p>The <code>tile[size](id)</code> method creates a view of <code>size</code> consecutive elements
+starting at <code>id × size</code>.</p>
+<h3 id="3-sequential-processing-within-tiles"><a class="header" href="#3-sequential-processing-within-tiles">3. <strong>Sequential processing within tiles</strong></a></h3>
+<p>Unlike elementwise, you process the tile sequentially:</p>
+<pre><code class="language-mojo">comptime for i in range(tile_size):
+    # Process element i within the current tile
+</code></pre>
+<p>This <code>comptime for</code> loop unrolls at compile-time for optimal performance.</p>
+<h3 id="4-load-and-store-within-tile-elements"><a class="header" href="#4-load-and-store-within-tile-elements">4. <strong>Load and store within tile elements</strong></a></h3>
+<pre><code class="language-mojo">var a_vec = a_tile.aligned_load[width=simd_width](Index(i))  # Load from position i in tile
+var b_vec = b_tile.aligned_load[width=simd_width](Index(i))  # Load from position i in tile
+var result = a_vec + b_vec                       # Addition at width simd_width
+output_tile.store[simd_width](Index(i), result)  # Store to position i in tile
+</code></pre>
+<p>Here <code>simd_width</code> is the inner function’s own parameter, which the launch below
+binds to 1—see the solution for why.</p>
+<h3 id="5-thread-configuration-difference"><a class="header" href="#5-thread-configuration-difference">5. <strong>Thread configuration difference</strong></a></h3>
+<pre><code class="language-mojo">elementwise[process_tiles, 1, target="gpu"](num_tiles, ctx)
+</code></pre>
+<p>Note the <code>1</code> instead of <code>SIMD_WIDTH</code> - each thread processes one entire tile
+sequentially.</p>
+<h3 id="6-memory-access-pattern-insight"><a class="header" href="#6-memory-access-pattern-insight">6. <strong>Memory access pattern insight</strong></a></h3>
+<p>Each thread accesses a contiguous block of memory (the tile), then moves to the
+next tile. This creates excellent <strong>spatial locality</strong> within each thread’s
+execution.</p>
+<h3 id="7-key-debugging-insight"><a class="header" href="#7-key-debugging-insight">7. <strong>Key debugging insight</strong></a></h3>
+<p>With tiling, you’ll see fewer thread launches but each does more work:</p>
+<ul>
+<li>Elementwise: 256 invocations (for SIMD_WIDTH=4), each covering 4 elements</li>
+<li>Tiled: 32 invocations, each walking 32 elements one at a time</li>
+</ul>
+</div>
+</details>
+<h2 id="running-the-code"><a class="header" href="#running-the-code">Running the code</a></h2>
+<p>To test your solution, run the following command in your terminal:</p>
+<div class="code-tabs" data-tab-group="package-manager">
+  <div class="tab-buttons">
+    <button class="tab-button">pixi NVIDIA (default)</button>
+    <button class="tab-button">pixi AMD</button>
+    <button class="tab-button">pixi Apple</button>
+    <button class="tab-button">uv</button>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">pixi run p23 --tiled
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">pixi run -e amd p23 --tiled
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">pixi run -e apple p23 --tiled
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">uv run poe p23 --tiled
+</code></pre>
+  </div>
+</div>
+<p>Your output will look like this when not yet solved:</p>
+<pre><code class="language-txt">SIZE: 1024
+simd_width: 4
+tile size: 32
+out: HostBuffer([0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0])
+expected: HostBuffer([1.0, 5.0, 9.0, ..., 4085.0, 4089.0, 4093.0])
+</code></pre>
+<h2 id="solution"><a class="header" href="#solution">Solution</a></h2>
+<details class="solution-details">
+<summary></summary>
+<pre><code class="language-mojo">comptime TILE_SIZE = 32
+
+
+def tiled_elementwise_add[
+    LayoutT: TensorLayout,
+    dtype: DType,
+    simd_width: Int,
+    rank: Int,
+    size: Int,
+    tile_size: Int,
+](
+    output: TileTensor[mut=True, dtype, LayoutT, MutAnyOrigin],
+    a: TileTensor[mut=False, dtype, LayoutT, MutAnyOrigin],
+    b: TileTensor[mut=False, dtype, LayoutT, MutAnyOrigin],
+    ctx: DeviceContext,
+) raises:
+    @parameter
+    @always_inline
+    def process_tiles[
+        simd_width: Int, alignment: Int = align_of[dtype]()
+    ](indices: Coord) capturing -&gt; None:
+        var tile_id = Int(indices[0].value())
+
+        var output_tile = output.tile[tile_size](tile_id).to_layout_tensor()
+        var a_tile = a.tile[tile_size](tile_id).to_layout_tensor()
+        var b_tile = b.tile[tile_size](tile_id).to_layout_tensor()
+
+        comptime for i in range(tile_size):
+            var a_vec = a_tile.aligned_load[width=simd_width](Index(i))
+            var b_vec = b_tile.aligned_load[width=simd_width](Index(i))
+            var ret = a_vec + b_vec
+            output_tile.store[simd_width](Index(i), ret)
+
+    var num_tiles = (size + tile_size - 1) // tile_size
+    elementwise[process_tiles, 1, target="gpu"](num_tiles, ctx)
+
+
+</code></pre>
+<div class="solution-explanation">
+<p>The tiled processing pattern demonstrates advanced memory optimization
+techniques for GPU programming:</p>
+<h3 id="1-tiling-philosophy-and-memory-hierarchy"><a class="header" href="#1-tiling-philosophy-and-memory-hierarchy">1. <strong>Tiling philosophy and memory hierarchy</strong></a></h3>
+<p>Tiling represents a fundamental shift in how we think about parallel processing:</p>
+<p><strong>Elementwise approach:</strong></p>
+<ul>
+<li><strong>Wide parallelism</strong>: Many threads, each doing minimal work</li>
+<li><strong>Small per-thread footprint</strong>: Each thread touches only <code>SIMD_WIDTH</code> elements</li>
+<li><strong>Coalesced access</strong>: Consecutive threads cover one contiguous run of memory</li>
+</ul>
+<p><strong>Tiled approach:</strong></p>
+<ul>
+<li><strong>Deep parallelism</strong>: Fewer threads, each doing substantial work</li>
+<li><strong>Localized memory access</strong>: Each thread works on contiguous data</li>
+<li><strong>Per-thread locality</strong>: Spatial locality within a thread, traded against
+warp-level coalescing (see below)</li>
+</ul>
+<h3 id="2-tile-organization-and-indexing"><a class="header" href="#2-tile-organization-and-indexing">2. <strong>Tile organization and indexing</strong></a></h3>
+<pre><code class="language-mojo">var tile_id = Int(indices[0].value())
+var output_tile = output.tile[tile_size](tile_id).to_layout_tensor()
+var a_tile = a.tile[tile_size](tile_id).to_layout_tensor()
+var b_tile = b.tile[tile_size](tile_id).to_layout_tensor()
+</code></pre>
+<p><strong>Tile mapping visualization (TILE_SIZE=32):</strong></p>
+<pre><code class="language-text">Original array: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ..., 1023]
+
+Tile 0 (thread 0): [0, 1, 2, ..., 31]      ← Elements 0-31
+Tile 1 (thread 1): [32, 33, 34, ..., 63]   ← Elements 32-63
+Tile 2 (thread 2): [64, 65, 66, ..., 95]   ← Elements 64-95
+...
+Tile 31 (thread 31): [992, 993, ..., 1023] ← Elements 992-1023
+</code></pre>
+<p><strong>Key insights:</strong></p>
+<ul>
+<li>Each <code>tile[size](id)</code> creates a <strong>view</strong> into the original tensor</li>
+<li>Views are zero-copy - no data movement, just pointer arithmetic</li>
+<li>Tile boundaries are always aligned to <code>tile_size</code> boundaries</li>
+</ul>
+<h3 id="3-sequential-processing-deep-dive"><a class="header" href="#3-sequential-processing-deep-dive">3. <strong>Sequential processing deep dive</strong></a></h3>
+<pre><code class="language-mojo">comptime for i in range(tile_size):
+    var a_vec = a_tile.aligned_load[width=simd_width](Index(i))
+    var b_vec = b_tile.aligned_load[width=simd_width](Index(i))
+    var ret = a_vec + b_vec
+    output_tile.store[simd_width](Index(i), ret)
+</code></pre>
+<p><strong>Why sequential processing?</strong></p>
+<ul>
+<li><strong>Cache optimization</strong>: Consecutive memory accesses maximize cache hit rates</li>
+<li><strong>Compiler optimization</strong>: <code>comptime for</code> loops unroll completely at
+compile-time</li>
+<li><strong>Predictable addresses</strong>: Each thread’s addresses advance by one element per
+step, which the compiler folds into the unrolled loop</li>
+<li><strong>Reduced coordination</strong>: One thread owns a whole tile, so there is nothing to
+synchronize</li>
+</ul>
+<p><strong>Execution pattern within one tile (TILE_SIZE=32):</strong></p>
+<pre><code class="language-text">Thread processes tile sequentially, one element per iteration:
+Step 0:  Load/store element [0]
+Step 1:  Load/store element [1]
+Step 2:  Load/store element [2]
+...
+Step 31: Load/store element [31]
+Total: 32 scalar operations per thread (comptime for i in range(tile_size))
+</code></pre>
+<p>The width here is 1, not <code>SIMD_WIDTH</code>. The inner <code>process_tiles</code> declares its
+own <code>simd_width</code> parameter, which shadows the enclosing function’s, and
+<code>elementwise[process_tiles, 1, target="gpu"](num_tiles, ctx)</code> instantiates it
+with 1. So <code>aligned_load[width=simd_width]</code> loads a single element and the loop
+walks the tile one element at a time. The two vectorized kernels later in this
+puzzle avoid the shadowing by naming their inner parameter
+<code>num_threads_per_tile</code>, which is why they really do load <code>SIMD_WIDTH</code> elements
+at a time.</p>
+<h3 id="4-memory-access-pattern-analysis"><a class="header" href="#4-memory-access-pattern-analysis">4. <strong>Memory access pattern analysis</strong></a></h3>
+<p><strong>Cache behavior comparison:</strong></p>
+<p><strong>Elementwise pattern:</strong></p>
+<pre><code class="language-text">Thread 0: accesses positions [0:4]                        ← One SIMD chunk
+Thread 1: accesses positions [4:8]                        ← Next SIMD chunk
+...
+Result: Each thread touches one small chunk, and the chunks spread across
+        the entire array
+</code></pre>
+<p><strong>Tiled pattern:</strong></p>
+<pre><code class="language-text">Thread 0: accesses positions [0:32] sequentially         ← Contiguous 32-element block
+Thread 1: accesses positions [32:64] sequentially       ← Next contiguous 32-element block
+...
+Result: Perfect spatial locality within each thread
+</code></pre>
+<p><strong>Cache efficiency implications:</strong></p>
+<ul>
+<li><strong>L1 cache</strong>: Small tiles often fit better in L1 cache, reducing cache misses</li>
+<li><strong>TLB efficiency</strong>: Fewer translation lookaside buffer misses</li>
+<li><strong>Coalescing caveat</strong>: GPUs have no hardware prefetcher, and coalescing is a
+per-warp property, not a per-thread one. Because each thread walks its own
+tile, on any single iteration the lanes of a warp sit <code>tile_size</code> elements
+apart - this pattern buys per-thread sequentiality at the cost of warp-level
+coalescing</li>
+</ul>
+<h3 id="5-thread-configuration-strategy"><a class="header" href="#5-thread-configuration-strategy">5. <strong>Thread configuration strategy</strong></a></h3>
+<pre><code class="language-mojo">elementwise[process_tiles, 1, target="gpu"](num_tiles, ctx)
+</code></pre>
+<p><strong>Why <code>1</code> instead of <code>SIMD_WIDTH</code>?</strong></p>
+<ul>
+<li><strong>Thread count</strong>: Launch exactly <code>num_tiles</code> threads, not
+<code>num_tiles × SIMD_WIDTH</code></li>
+<li><strong>Work distribution</strong>: Each thread handles one complete tile</li>
+<li><strong>Load balancing</strong>: More work per thread, fewer threads total</li>
+<li><strong>Memory locality</strong>: Each thread’s work is spatially localized</li>
+</ul>
+<p><strong>Performance trade-offs:</strong></p>
+<ul>
+<li><strong>Fewer logical threads</strong>: May not fully utilize all GPU cores at low
+occupancy</li>
+<li><strong>More work per thread</strong>: Better cache utilization and reduced coordination
+overhead</li>
+<li><strong>Sequential access</strong>: Each thread’s own stream of addresses is contiguous,
+though the warp’s are not</li>
+<li><strong>Reduced overhead</strong>: Less thread launch and coordination overhead</li>
+</ul>
+<p><strong>Important note</strong>: “Fewer threads” refers to the logical programming model. The
+GPU scheduler can still achieve high hardware utilization by running multiple
+warps and efficiently switching between them during memory stalls.</p>
+<h3 id="6-performance-characteristics"><a class="header" href="#6-performance-characteristics">6. <strong>Performance characteristics</strong></a></h3>
+<p><strong>When tiling helps:</strong></p>
+<ul>
+<li><strong>Memory-bound operations</strong>: When memory bandwidth is the bottleneck</li>
+<li><strong>Cache-sensitive workloads</strong>: Operations that benefit from data reuse</li>
+<li><strong>Complex operations</strong>: When compute per element is higher</li>
+<li><strong>Limited parallelism</strong>: When you have fewer threads than GPU cores</li>
+</ul>
+<p><strong>When tiling hurts:</strong></p>
+<ul>
+<li><strong>Highly parallel workloads</strong>: When you need maximum thread utilization</li>
+<li><strong>Simple operations</strong>: When memory access dominates over computation</li>
+<li><strong>Irregular access patterns</strong>: When tiling doesn’t improve locality</li>
+</ul>
+<p><strong>For our simple addition example (TILE_SIZE=32):</strong></p>
+<ul>
+<li><strong>Thread count</strong>: 32 threads instead of 256 (8× fewer)</li>
+<li><strong>Work per thread</strong>: 32 elements instead of 4 (8× more)</li>
+<li><strong>Memory pattern</strong>: Sequential vs strided access</li>
+<li><strong>Cache utilization</strong>: Much better spatial locality</li>
+</ul>
+<h3 id="7-advanced-tiling-considerations"><a class="header" href="#7-advanced-tiling-considerations">7. <strong>Advanced tiling considerations</strong></a></h3>
+<p><strong>Tile size selection:</strong></p>
+<ul>
+<li><strong>Too small</strong>: Poor cache utilization, more overhead</li>
+<li><strong>Too large</strong>: May not fit in cache, reduced parallelism</li>
+<li><strong>Sweet spot</strong>: Usually 16-64 elements for L1 cache optimization</li>
+<li><strong>Our choice</strong>: 32 elements balances cache usage with parallelism</li>
+</ul>
+<p><strong>Hardware considerations:</strong></p>
+<ul>
+<li><strong>Cache size</strong>: Tiles should fit in L1 cache when possible</li>
+<li><strong>Memory bandwidth</strong>: Consider memory controller width</li>
+<li><strong>Core count</strong>: Ensure enough tiles to utilize all cores</li>
+<li><strong>SIMD width</strong>: Tile size should be multiple of SIMD width</li>
+</ul>
+<p><strong>Comparison summary:</strong></p>
+<pre><code class="language-text">Elementwise: High parallelism, scattered memory access
+Tiled:       Moderate parallelism, localized memory access
+</code></pre>
+<p>The choice between elementwise and tiled patterns depends on your specific
+workload characteristics, data access patterns, and target hardware
+capabilities.</p>
+</div>
+</details>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next steps</a></h2>
+<p>Now that you understand both elementwise and tiled patterns:</p>
+<ul>
+<li><strong><a href="./vectorize.html">Vectorization</a></strong>: Fine-grained control over SIMD operations</li>
+<li><strong><a href="./gpu-thread-vs-simd.html">🧠 GPU Threading vs SIMD</a></strong>: Understanding the
+execution hierarchy</li>
+<li><strong><a href="./benchmarking.html">📊 Benchmarking</a></strong>: Performance analysis and
+optimization</li>
+</ul>
+<p>💡 <strong>Key takeaway</strong>: Tiling demonstrates how memory access patterns often matter
+more than raw computational throughput. The best GPU code balances parallelism
+with memory hierarchy optimization.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../puzzle_23/elementwise.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../puzzle_23/vectorize.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../puzzle_23/elementwise.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../puzzle_23/vectorize.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/mojolang.js"></script>
+        <script src="../theme/sidebar.js"></script>
+        <script src="../theme/solution.js"></script>
+        <script src="../theme/init-amplitude.js"></script>
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/language-switcher.js"></script>
+
+
+    </div>
+    </body>
+</html>

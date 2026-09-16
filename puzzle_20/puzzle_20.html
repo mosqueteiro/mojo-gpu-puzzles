@@ -1,0 +1,476 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Puzzle 20: 1D Convolution Op - Mojo 🔥 GPU Puzzles</title>
+
+
+        <!-- Custom HTML head -->
+        <!-- Fonts + lottie-player are fetched from CDN (lottie-player pinned to a
+             fixed version). If a resource fails to load (e.g. no network access),
+             each falls back to a locally vendored copy in theme/vendor-cache/
+             (gitignored; populated by `pixi run fetch-offline-assets`, see
+             scripts/fetch_offline_assets.sh) — no build-time step or
+             version-controlled file swap involved. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+            onload="this.onload=null;this.rel='stylesheet'"
+            onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/roboto-mono.css'">
+        <noscript><link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"></noscript>
+        
+        <script defer src="https://unpkg.com/@lottiefiles/lottie-player@2.0.12/dist/lottie-player.js"
+            onerror="var s=document.createElement('script');s.src='../theme/vendor-cache/lottie-player.js';document.head.appendChild(s);"></script>
+        
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" id="theme">
+        
+        <!-- Additional meta tags -->
+        <meta property="og:title" content="Mojo🔥 GPU Puzzles">
+        <meta property="og:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta property="og:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+        <meta property="og:url" content="https://puzzles.modular.com/">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:image:alt" content="Mojo GPU Puzzles Logo">
+        <meta name="twitter:title" content="Mojo🔥 GPU Puzzles">
+        <meta name="twitter:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta name="twitter:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+
+        <!-- Fetched from CDN; falls back to a locally vendored copy in
+             theme/vendor-cache/ (gitignored; see scripts/fetch_offline_assets.sh)
+             if it fails to load, e.g. no network access. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" onload="this.onload=null;this.rel='stylesheet'" onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/inter.css'">
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"></noscript>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" href="../theme/css/tabs.css">
+        <link rel="stylesheet" href="../theme/css/language-switcher.css">
+
+        <!--
+            MathJax locale fix: In non-English locales (e.g. lang="ko"), browsers apply CJK
+            font fallback to MathJax's font measurement div, causing incorrect bounding box
+            widths for long formulas. Fix: temporarily set lang="en" on <html> during
+            MathJax's entire startup, then restore the original lang. Individual .MathJax
+            elements keep lang="en" to prevent visual CJK font fallback.
+        -->
+        <script type="text/x-mathjax-config">
+            (function() {
+                var html = document.documentElement;
+                var origLang = html.getAttribute('lang');
+                if (origLang && origLang !== 'en') {
+                    html.setAttribute('lang', 'en');
+                    MathJax.Hub.Register.StartupHook("End", function() {
+                        html.setAttribute('lang', origLang);
+                        document.querySelectorAll('.MathJax, .MathJax_Display').forEach(function(el) {
+                            el.setAttribute('lang', 'en');
+                        });
+                    });
+                }
+            })();
+        </script>
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "ayu";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <button class="collapse-sidebar" aria-label="Collapse sidebar"></button>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Toggle color mode and talk to us buttons -->
+        <script>
+            document.addEventListener('click', function (event) {
+                if (!event.target.matches('.theme-toggle')) return;
+                event.preventDefault();
+                const prevTheme = theme;
+                html.classList.remove(theme);
+                const newTheme = prevTheme === 'ayu' ? 'light' : 'ayu'
+                html.classList.add(newTheme);
+                theme = newTheme
+                localStorage.setItem('mdbook-theme', theme);
+            }, false);
+            document.addEventListener('click', function() {
+                if (!event.target.matches('.log-in')) return;
+                event.preventDefault();
+                window.amplitude.logEvent('LoginClickedFromPuzzles');
+                window.open('https://developer.modular.com', '_blank');
+            });
+        </script>
+
+        <div class="page-header">
+            <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                <i class="fa fa-bars"></i>
+            </label>
+            <div id="menu-bar" class="menu-bar">
+                <div class="left-buttons">
+                    <div class="logo-section">
+                        <a class="desktop-logo-link" href="https://modular.com"></a>
+                        <a class="mobile-logo-link" href="https://builds.modular.com"></a>
+                        <div class="slash">/</div>
+                        <a class="internal-link" ref="/">Puzzles</a>
+                    </div>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Dark</button></li>
+                        </ul>
+                    </div>
+                <div class="right-buttons">
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <div id="language-switcher-placeholder"></div>
+                    <button id="theme-toggle" class="icon-button theme-toggle-btn" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="false" aria-expanded="false">
+                        <i class="theme-toggle"></i>
+                    </button>
+                    <a class="menu-btn print" href="../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a class="menu-btn" href="https://github.com/modular/mojo-gpu-puzzles" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+            <div class="page">
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="puzzle-20-1d-convolution-op"><a class="header" href="#puzzle-20-1d-convolution-op">Puzzle 20: 1D Convolution Op</a></h1>
+<blockquote>
+<h2 id="from-max-graph-to-pytorch-custom-ops"><a class="header" href="#from-max-graph-to-pytorch-custom-ops">From MAX Graph to PyTorch custom ops</a></h2>
+<p>We’re now entering Part V of our GPU puzzle journey:
+<strong>PyTorch Custom Operations</strong>.</p>
+<p>In <a href="../puzzle_17/puzzle_17.html">Puzzle 17</a>, we learned how to integrate Mojo
+GPU kernels with Python using MAX Graph. Now we’ll explore how to:</p>
+<ul>
+<li>Use the same Mojo kernel through MAX’s <code>CustomOpLibrary</code> for PyTorch</li>
+<li>Integrate with PyTorch’s tensor system</li>
+<li>Compare MAX Graph vs PyTorch approaches for custom operations</li>
+<li>Understand the critical pattern of explicit output tensor allocation</li>
+</ul>
+<p>This transition shows how the same optimized GPU kernel can work with
+different Python integration approaches.</p>
+</blockquote>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>In this puzzle, we’ll take the exact same 1D convolution kernel from
+<a href="../puzzle_17/puzzle_17.html">Puzzle 17</a> and integrate it with PyTorch using the
+<a href="https://max.modular.com/api/python/generated/max.experimental.torch.CustomOpLibrary/">CustomOpLibrary</a>
+instead of MAX Graph.</p>
+<p>The key learning here is that <strong>the same Mojo kernel works unchanged</strong> - only
+the Python integration layer differs between MAX Graph and PyTorch approaches.</p>
+<h2 id="code-to-complete"><a class="header" href="#code-to-complete">Code to complete</a></h2>
+<p>To complete this puzzle, you need to fill in one line to call the custom
+operation:</p>
+<pre><code class="language-python">import torch
+from max.experimental.torch import CustomOpLibrary
+
+
+def conv1d_pytorch(
+    input_tensor: torch.Tensor, kernel_tensor: torch.Tensor
+) -&gt; torch.Tensor:
+    """
+    1D convolution using our custom PyTorch operation.
+
+    This demonstrates the transition from MAX Graph (p15) to PyTorch CustomOpLibrary.
+    Uses the EXACT same Mojo kernel, but different Python integration!
+    """
+    # Load our custom operations
+    mojo_kernels = Path(__file__).parent / "op"
+    ops = CustomOpLibrary(mojo_kernels)
+
+    # Create output tensor with same shape as input
+    output_tensor = torch.empty_like(input_tensor)
+
+    # Call our custom conv1d operation with explicit output tensor
+    # The Mojo signature expects: (out, input, kernel)
+    _conv1d = ops.conv1d[
+        {
+            "input_size": input_tensor.shape[0],
+            "conv_size": kernel_tensor.shape[0],
+        }
+    ]
+
+    # FILL IN with 1 line of code
+
+    return output_tensor
+
+
+</code></pre>
+<p><a href="https://github.com/modular/mojo-gpu-puzzles/blob/main/problems/p20/p20.py" class="filename">View full file: problems/p20/p20.py</a></p>
+<p>You can run the puzzle with:</p>
+<div class="code-tabs" data-tab-group="package-manager">
+  <div class="tab-buttons">
+    <button class="tab-button">pixi NVIDIA (default)</button>
+    <button class="tab-button">pixi AMD</button>
+    <button class="tab-button">uv</button>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">pixi run p20
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">pixi run -e amd p20
+</code></pre>
+  </div>
+  <div class="tab-content">
+<pre><code class="language-bash">uv run poe p20
+</code></pre>
+  </div>
+</div>
+<p>When successful, you should see output similar to:</p>
+<pre><code class="language-text">Puzzle 20: From MAX Graph to PyTorch Custom Ops
+============================================================
+Input array: [ 0.  1.  2.  3.  4.  5.  6.  7.  8.  9. 10. 11. 12. 13. 14.]
+Convolution kernel: [0. 1. 2. 3.]
+
+NumPy reference result: [14. 20. 26. 32. 38. 44. 50. 56. 62. 68. 74. 80. 41. 14.  0.]
+
+Testing PyTorch Custom Op (device: cuda)
+----------------------------------------
+PyTorch custom op result: [14. 20. 26. 32. 38. 44. 50. 56. 62. 68. 74. 80. 41. 14.  0.]
+✅ PyTorch custom op verification PASSED
+
+Comparing with MAX Graph approach (like p15)
+----------------------------------------
+MAX Graph result: [14. 20. 26. 32. 38. 44. 50. 56. 62. 68. 74. 80. 41. 14.  0.]
+✅ MAX Graph verification PASSED
+✅ PyTorch and MAX Graph results MATCH
+</code></pre>
+<h2 id="solution"><a class="header" href="#solution">Solution</a></h2>
+<details class="solution-details">
+<summary></summary>
+<p>The solution requires calling the compiled custom operation with the proper
+arguments:</p>
+<pre><code class="language-python">    # Call our custom conv1d operation with explicit output tensor
+    # The Mojo signature expects: (out, input, kernel)
+    conv1d = ops.conv1d[
+        {
+            "input_size": input_tensor.shape[0],
+            "conv_size": kernel_tensor.shape[0],
+        }
+    ]
+    torch.compile(conv1d)(output_tensor, input_tensor, kernel_tensor)
+</code></pre>
+<div class="solution-explanation">
+<p>This solution demonstrates several critical concepts:</p>
+<h3 id="1-torchcompile-integration"><a class="header" href="#1-torchcompile-integration">1. <strong>torch.compile() integration</strong></a></h3>
+<p>The solution shows <code>torch.compile</code> integration</p>
+<pre><code class="language-python">torch.compile(conv1d)(output_tensor, input_tensor, kernel_tensor)
+</code></pre>
+<h3 id="2-explicit-output-tensor-allocation"><a class="header" href="#2-explicit-output-tensor-allocation">2. <strong>Explicit Output Tensor Allocation</strong></a></h3>
+<pre><code class="language-python">output_tensor = torch.empty_like(input_tensor)
+</code></pre>
+<ul>
+<li>Unlike MAX Graph which handles output allocation automatically</li>
+<li>PyTorch CustomOpLibrary requires <strong>pre-allocated output tensors</strong></li>
+<li>The Mojo operation signature expects <code>(out, input, kernel)</code> order</li>
+</ul>
+<h3 id="3-parameter-dictionary"><a class="header" href="#3-parameter-dictionary">3. <strong>Parameter Dictionary</strong></a></h3>
+<pre><code class="language-python">ops.conv1d[{"input_size": input_tensor.shape[0], "conv_size": kernel_tensor.shape[0]}]
+</code></pre>
+<ul>
+<li>Parameters are passed as a dictionary to the operation</li>
+<li>These become compile-time parameters in the Mojo kernel</li>
+<li>Must match the parameter names in the Mojo <code>@staticmethod def execute</code>
+signature</li>
+</ul>
+<h3 id="4-same-kernel-different-integration"><a class="header" href="#4-same-kernel-different-integration">4. <strong>Same Kernel, Different Integration</strong></a></h3>
+<p>The underlying Mojo kernel (<code>conv1d_kernel</code>) is identical to Puzzle 17:</p>
+<ul>
+<li>Same GPU kernel code</li>
+<li>Same memory access patterns</li>
+<li>Same computational logic</li>
+<li>Only the Python wrapper layer changes</li>
+</ul>
+</div>
+</details>
+<h2 id="key-concepts"><a class="header" href="#key-concepts">Key concepts</a></h2>
+<p>This puzzle illustrates several important patterns for PyTorch custom
+operations:</p>
+<div class="table-wrapper"><table><thead><tr><th>Concept</th><th>MAX Graph (p17)</th><th>PyTorch CustomOpLibrary (p20)</th></tr></thead><tbody>
+<tr><td><strong>Output Allocation</strong></td><td>Automatic</td><td>Manual (<code>torch.empty_like()</code>)</td></tr>
+<tr><td><strong>Operation Call</strong></td><td><code>ops.custom(...)</code></td><td><code>torch.compile(op)(...)</code></td></tr>
+<tr><td><strong>Parameter Passing</strong></td><td><code>parameters={...}</code></td><td><code>op[{...}]</code></td></tr>
+<tr><td><strong>Device Management</strong></td><td>Explicit device context</td><td>PyTorch tensor device</td></tr>
+<tr><td><strong>Memory Management</strong></td><td>MAX Graph tensors</td><td>PyTorch tensors</td></tr>
+</tbody></table>
+</div>
+<h3 id="critical-pattern-explicit-output-tensor-allocation"><a class="header" href="#critical-pattern-explicit-output-tensor-allocation">Critical pattern: Explicit output tensor allocation</a></h3>
+<p>The most important difference is that PyTorch CustomOpLibrary requires
+<strong>explicit output tensor allocation</strong>:</p>
+<pre><code class="language-python"># ❌ This won't work - no output tensor
+result = torch.compile(conv1d)(input_tensor, kernel_tensor)
+
+# ✅ This works - pre-allocated output tensor
+output_tensor = torch.empty_like(input_tensor)
+torch.compile(conv1d)(output_tensor, input_tensor, kernel_tensor)
+</code></pre>
+<p>This pattern ensures:</p>
+<ul>
+<li>Memory is allocated on the correct device</li>
+<li>Output tensor has the right shape and dtype</li>
+<li>The Mojo kernel can write directly to the output buffer</li>
+</ul>
+<h3 id="torchcompile-integration"><a class="header" href="#torchcompile-integration">torch.compile() integration</a></h3>
+<p><code>torch.compile()</code> traces the call and hands it to PyTorch’s Inductor backend,
+so the custom op is compiled into the surrounding PyTorch graph instead of
+being dispatched on its own at every call. Operations produced by
+<code>CustomOpLibrary</code> are ordinary PyTorch custom ops and can also be invoked
+eagerly, so this is an integration choice rather than a requirement of the
+API.</p>
+<h2 id="debugging-custom-operations"><a class="header" href="#debugging-custom-operations">Debugging custom operations</a></h2>
+<p>Common issues and solutions:</p>
+<ol>
+<li><strong>Missing Output Tensor</strong>: The op writes in place, so allocate the output
+first and pass it as the leading argument</li>
+<li><strong>Wrong Output Shape</strong>: Ensure output tensor matches expected dimensions</li>
+<li><strong>Device Mismatch</strong>: All tensors must be on the same device</li>
+<li><strong>Parameter Errors</strong>: Verify parameter names match Mojo operation signature</li>
+</ol>
+<p>The debug approach: Compare your PyTorch results with the MAX Graph reference
+implementation that runs the same kernel.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../bonuses/part4.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../puzzle_21/puzzle_21.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../bonuses/part4.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../puzzle_21/puzzle_21.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/mojolang.js"></script>
+        <script src="../theme/sidebar.js"></script>
+        <script src="../theme/solution.js"></script>
+        <script src="../theme/init-amplitude.js"></script>
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/language-switcher.js"></script>
+
+
+    </div>
+    </body>
+</html>

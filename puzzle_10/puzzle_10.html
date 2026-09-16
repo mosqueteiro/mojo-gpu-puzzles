@@ -1,0 +1,435 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Puzzle 10: Memory Error Detection &amp; Race Conditions with Sanitizers - Mojo 🔥 GPU Puzzles</title>
+
+
+        <!-- Custom HTML head -->
+        <!-- Fonts + lottie-player are fetched from CDN (lottie-player pinned to a
+             fixed version). If a resource fails to load (e.g. no network access),
+             each falls back to a locally vendored copy in theme/vendor-cache/
+             (gitignored; populated by `pixi run fetch-offline-assets`, see
+             scripts/fetch_offline_assets.sh) — no build-time step or
+             version-controlled file swap involved. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+            onload="this.onload=null;this.rel='stylesheet'"
+            onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/roboto-mono.css'">
+        <noscript><link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"></noscript>
+        
+        <script defer src="https://unpkg.com/@lottiefiles/lottie-player@2.0.12/dist/lottie-player.js"
+            onerror="var s=document.createElement('script');s.src='../theme/vendor-cache/lottie-player.js';document.head.appendChild(s);"></script>
+        
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" id="theme">
+        
+        <!-- Additional meta tags -->
+        <meta property="og:title" content="Mojo🔥 GPU Puzzles">
+        <meta property="og:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta property="og:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+        <meta property="og:url" content="https://puzzles.modular.com/">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:image:alt" content="Mojo GPU Puzzles Logo">
+        <meta name="twitter:title" content="Mojo🔥 GPU Puzzles">
+        <meta name="twitter:description" content="Learn GPU Programming in Mojo🔥 Through Interactive Puzzles">
+        <meta name="twitter:image" content="https://puzzles.modular.com/puzzles_images/puzzle-mark.png">
+
+        <!-- Fetched from CDN; falls back to a locally vendored copy in
+             theme/vendor-cache/ (gitignored; see scripts/fetch_offline_assets.sh)
+             if it fails to load, e.g. no network access. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" onload="this.onload=null;this.rel='stylesheet'" onerror="this.onerror=null;this.rel='stylesheet';this.href='../theme/vendor-cache/fonts/inter.css'">
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"></noscript>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/css/custom.css">
+        <link rel="stylesheet" href="../theme/css/highlight.css">
+        <link rel="stylesheet" href="../theme/css/tabs.css">
+        <link rel="stylesheet" href="../theme/css/language-switcher.css">
+
+        <!--
+            MathJax locale fix: In non-English locales (e.g. lang="ko"), browsers apply CJK
+            font fallback to MathJax's font measurement div, causing incorrect bounding box
+            widths for long formulas. Fix: temporarily set lang="en" on <html> during
+            MathJax's entire startup, then restore the original lang. Individual .MathJax
+            elements keep lang="en" to prevent visual CJK font fallback.
+        -->
+        <script type="text/x-mathjax-config">
+            (function() {
+                var html = document.documentElement;
+                var origLang = html.getAttribute('lang');
+                if (origLang && origLang !== 'en') {
+                    html.setAttribute('lang', 'en');
+                    MathJax.Hub.Register.StartupHook("End", function() {
+                        html.setAttribute('lang', origLang);
+                        document.querySelectorAll('.MathJax, .MathJax_Display').forEach(function(el) {
+                            el.setAttribute('lang', 'en');
+                        });
+                    });
+                }
+            })();
+        </script>
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "ayu";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <button class="collapse-sidebar" aria-label="Collapse sidebar"></button>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Toggle color mode and talk to us buttons -->
+        <script>
+            document.addEventListener('click', function (event) {
+                if (!event.target.matches('.theme-toggle')) return;
+                event.preventDefault();
+                const prevTheme = theme;
+                html.classList.remove(theme);
+                const newTheme = prevTheme === 'ayu' ? 'light' : 'ayu'
+                html.classList.add(newTheme);
+                theme = newTheme
+                localStorage.setItem('mdbook-theme', theme);
+            }, false);
+            document.addEventListener('click', function() {
+                if (!event.target.matches('.log-in')) return;
+                event.preventDefault();
+                window.amplitude.logEvent('LoginClickedFromPuzzles');
+                window.open('https://developer.modular.com', '_blank');
+            });
+        </script>
+
+        <div class="page-header">
+            <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                <i class="fa fa-bars"></i>
+            </label>
+            <div id="menu-bar" class="menu-bar">
+                <div class="left-buttons">
+                    <div class="logo-section">
+                        <a class="desktop-logo-link" href="https://modular.com"></a>
+                        <a class="mobile-logo-link" href="https://builds.modular.com"></a>
+                        <div class="slash">/</div>
+                        <a class="internal-link" ref="/">Puzzles</a>
+                    </div>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Dark</button></li>
+                        </ul>
+                    </div>
+                <div class="right-buttons">
+                    <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <div id="language-switcher-placeholder"></div>
+                    <button id="theme-toggle" class="icon-button theme-toggle-btn" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="false" aria-expanded="false">
+                        <i class="theme-toggle"></i>
+                    </button>
+                    <a class="menu-btn print" href="../print.html" title="Print this book" aria-label="Print this book">
+                        <i id="print-button" class="fa fa-print"></i>
+                    </a>
+                    <a class="menu-btn" href="https://github.com/modular/mojo-gpu-puzzles" title="Git repository" aria-label="Git repository">
+                        <i id="git-repository-button" class="fa fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+            <div class="page">
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="puzzle-10-memory-error-detection--race-conditions-with-sanitizers"><a class="header" href="#puzzle-10-memory-error-detection--race-conditions-with-sanitizers">Puzzle 10: Memory Error Detection &amp; Race Conditions with Sanitizers</a></h1>
+<blockquote>
+<p>⚠️ This puzzle works on compatible <strong>NVIDIA GPU</strong> only. We are working to
+enable tooling support for other GPU vendors.</p>
+</blockquote>
+<h2 id="the-moment-every-gpu-developer-dreads"><a class="header" href="#the-moment-every-gpu-developer-dreads">The moment every GPU developer dreads</a></h2>
+<p>You’ve written what looks like perfect GPU code. Your algorithm is sound, your
+memory management seems correct, and your thread coordination appears flawless.
+You run your tests with confidence and…</p>
+<ul>
+<li><strong>✅ ALL TESTS PASS</strong></li>
+<li><strong>✅ Performance looks great</strong></li>
+<li><strong>✅ Output matches expected results</strong></li>
+</ul>
+<p>You ship your code to production, feeling proud of your work. Then weeks later,
+you get the call:</p>
+<ul>
+<li><strong>“The application crashed in production”</strong></li>
+<li><strong>“Results are inconsistent between runs”</strong></li>
+<li><strong>“Memory corruption detected”</strong></li>
+</ul>
+<p>Welcome to the insidious world of <strong>silent GPU bugs</strong> - errors that hide in the
+shadows of massive parallelism, waiting to strike when you least expect them.
+These bugs can pass all your tests, produce correct results 99% of the time, and
+then catastrophically fail when it matters most.</p>
+<p><strong>Important note</strong>: This puzzle requires NVIDIA GPU hardware and is only
+available through <code>pixi</code>, as <code>compute-sanitizer</code> is part of NVIDIA’s CUDA
+toolkit.</p>
+<h2 id="why-gpu-bugs-are-uniquely-sinister"><a class="header" href="#why-gpu-bugs-are-uniquely-sinister">Why GPU bugs are uniquely sinister</a></h2>
+<p>Unlike CPU programs where bugs usually announce themselves with immediate
+crashes or wrong results, GPU bugs are <strong>experts at hiding</strong>:</p>
+<p><strong>Silent corruption patterns:</strong></p>
+<ul>
+<li><strong>Memory violations that don’t crash</strong>: Out-of-bounds access to “lucky” memory
+locations</li>
+<li><strong>Race conditions that work “most of the time”</strong>: Timing-dependent bugs that
+appear random</li>
+<li><strong>Thread coordination failures</strong>: Deadlocks that only trigger under specific
+load conditions</li>
+</ul>
+<p><strong>Massive scale amplification:</strong></p>
+<ul>
+<li><strong>One thread’s bug affects thousands</strong>: A single memory violation can corrupt
+entire warps</li>
+<li><strong>Race conditions multiply exponentially</strong>: More threads = more opportunities
+for corruption</li>
+<li><strong>Hardware variations mask problems</strong>: Same bug behaves differently across GPU
+architectures</li>
+</ul>
+<p>But here’s the exciting part: <strong>once you learn GPU sanitization tools, you’ll
+catch these elusive bugs before they ever reach production</strong>.</p>
+<h2 id="your-sanitization-toolkit-nvidia-compute-sanitizer"><a class="header" href="#your-sanitization-toolkit-nvidia-compute-sanitizer">Your sanitization toolkit: NVIDIA compute-sanitizer</a></h2>
+<p><strong>NVIDIA compute-sanitizer</strong> is your specialized weapon against GPU bugs. It can
+detect:</p>
+<ul>
+<li><strong>Memory violations</strong>: Out-of-bounds access, invalid pointers, memory leaks</li>
+<li><strong>Race conditions</strong>: Shared memory hazards between threads</li>
+<li><strong>Synchronization bugs</strong>: Deadlocks, barrier misuse, improper thread
+coordination</li>
+<li><strong>And more</strong>: Check <code>pixi run compute-sanitizer --help</code></li>
+</ul>
+<p>📖 <strong>Official documentation</strong>:
+<a href="https://docs.nvidia.com/compute-sanitizer/ComputeSanitizer/index.html">NVIDIA Compute Sanitizer User Guide</a></p>
+<p>Think of it as <strong>X-ray vision for your GPU programs</strong> - revealing hidden
+problems that normal testing can’t see.</p>
+<h2 id="what-youll-learn-in-this-puzzle"><a class="header" href="#what-youll-learn-in-this-puzzle">What you’ll learn in this puzzle</a></h2>
+<p>This puzzle teaches you to systematically find and fix the most elusive GPU
+bugs. You’ll learn the detective skills that distinguish competent GPU
+developers from exceptional ones.</p>
+<h3 id="critical-skills-youll-develop"><a class="header" href="#critical-skills-youll-develop"><strong>Critical skills you’ll develop</strong></a></h3>
+<ol>
+<li><strong>Silent bug detection</strong> - Find problems that tests don’t catch</li>
+<li><strong>Memory corruption investigation</strong> - Track down undefined behavior before it
+strikes</li>
+<li><strong>Race condition detection</strong> - Identify and eliminate concurrency hazards</li>
+<li><strong>Tool selection expertise</strong> - Know exactly which sanitizer to use when</li>
+<li><strong>Production debugging confidence</strong> - Catch bugs before they reach users</li>
+</ol>
+<h3 id="real-world-bug-hunting-scenarios"><a class="header" href="#real-world-bug-hunting-scenarios"><strong>Real-world bug hunting scenarios</strong></a></h3>
+<p>You’ll investigate the two most dangerous classes of GPU bugs:</p>
+<ul>
+<li><strong>Memory violations</strong> - The silent killers that corrupt data without warning</li>
+<li><strong>Race conditions</strong> - The chaos creators that make results unpredictable</li>
+</ul>
+<p>Each scenario teaches you to think like a GPU bug detective, following clues
+that are invisible to normal testing.</p>
+<h2 id="your-bug-hunting-journey"><a class="header" href="#your-bug-hunting-journey">Your bug hunting journey</a></h2>
+<p>This puzzle takes you through a carefully designed progression from discovering
+silent corruption to learning parallel debugging:</p>
+<h3 id="-the-silent-corruption-mystery"><a class="header" href="#-the-silent-corruption-mystery">👮🏼‍♂️ <a href="./memcheck.html">The Silent Corruption Mystery</a></a></h3>
+<p><strong>Memory violation investigation</strong> - When tests pass but memory lies</p>
+<ul>
+<li>Investigate programs that pass tests while committing memory crimes</li>
+<li>Learn to spot the telltale signs of undefined behavior (UB)</li>
+<li>Learn <code>memcheck</code> - your memory violation detector</li>
+<li>Understand why GPU hardware masks memory errors</li>
+<li>Practice systematic memory access validation</li>
+</ul>
+<p><strong>Key outcome</strong>: Ability to detect memory violations that would otherwise go
+unnoticed until production</p>
+<h3 id="-the-race-condition-hunt"><a class="header" href="#-the-race-condition-hunt">🏁 <a href="./racecheck.html">The Race Condition Hunt</a></a></h3>
+<p><strong>Concurrency bug investigation</strong> - When threads turn against each other</p>
+<ul>
+<li>Investigate programs that fail randomly due to thread timing</li>
+<li>Learn to identify shared memory hazards before they corrupt data</li>
+<li>Learn <code>racecheck</code> - your race condition detector</li>
+<li>Compare <code>racecheck</code> vs <code>synccheck</code> for different concurrency bugs</li>
+<li>Practice thread synchronization strategies</li>
+</ul>
+<p><strong>Key outcome</strong>: Advanced concurrency debugging - the ability to tame thousands
+of parallel threads</p>
+<h2 id="the-gpu-detective-mindset"><a class="header" href="#the-gpu-detective-mindset">The GPU detective mindset</a></h2>
+<p>GPU sanitization requires you to become a <strong>parallel program detective</strong>
+investigating crimes where:</p>
+<ul>
+<li><strong>The evidence is hidden</strong> - Bugs occur in parallel execution you can’t
+directly observe</li>
+<li><strong>Multiple suspects exist</strong> - Thousands of threads, any combination could be
+guilty</li>
+<li><strong>The crime is intermittent</strong> - Race conditions and timing-dependent failures</li>
+<li><strong>The tools are specialized</strong> - Sanitizers that see what normal debugging
+can’t</li>
+</ul>
+<p>But like any good detective, you’ll learn to:</p>
+<ul>
+<li><strong>Follow invisible clues</strong> - Memory access patterns, thread timing,
+synchronization points</li>
+<li><strong>Think in parallel</strong> - Consider how thousands of threads interact
+simultaneously</li>
+<li><strong>Prevent future crimes</strong> - Build sanitization into your development workflow</li>
+<li><strong>Trust your tools</strong> - Let sanitizers reveal what manual testing cannot</li>
+</ul>
+<h2 id="prerequisites-and-expectations"><a class="header" href="#prerequisites-and-expectations">Prerequisites and expectations</a></h2>
+<p><strong>What you need to know</strong>:</p>
+<ul>
+<li>GPU programming concepts from Puzzles 1-8 (memory management, thread
+coordination, barriers)</li>
+<li><strong><a href="https://max.modular.com/packages/#gpu-compatibility">Compatible NVIDIA GPU hardware</a></strong></li>
+<li>Environment setup with <code>pixi</code> package manager for accessing
+<code>compute-sanitizer</code></li>
+<li><strong>Prior puzzles</strong>: Familiarity with
+<a href="../puzzle_04/introduction_tile_tensor.html">Puzzle 4</a> and
+<a href="../puzzle_08/puzzle_08.html">Puzzle 8</a> are recommended</li>
+</ul>
+<p><strong>What you’ll gain</strong>:</p>
+<ul>
+<li><strong>Production-ready debugging skills</strong> used by professional GPU development
+teams</li>
+<li><strong>Silent bug detection skills</strong> that prevent costly production failures</li>
+<li><strong>Parallel debugging confidence</strong> for the most challenging concurrency
+scenarios</li>
+<li><strong>Tool expertise</strong> that will serve you throughout your GPU programming career</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../puzzle_09/third_case.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../puzzle_10/memcheck.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../puzzle_09/third_case.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../puzzle_10/memcheck.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/mojolang.js"></script>
+        <script src="../theme/sidebar.js"></script>
+        <script src="../theme/solution.js"></script>
+        <script src="../theme/init-amplitude.js"></script>
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/language-switcher.js"></script>
+
+
+    </div>
+    </body>
+</html>
