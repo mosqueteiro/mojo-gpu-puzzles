@@ -68,7 +68,7 @@ nvidia = { features = ["nvidia"], solve-group = "nvidia" }
 amd = { features = ["amd"], solve-group = "amd" }
 apple = { features = ["apple"], solve-group = "apple" }
 book = { features = ["book"] }
-default = { features = ["nvidia"] }
+default = { features = ["amd"] }
 
 [tasks]
 install-pre-commit = "pre-commit install"
