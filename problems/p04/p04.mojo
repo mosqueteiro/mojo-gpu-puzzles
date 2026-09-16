@@ -23,7 +23,10 @@ def add_10_2d(
     var size = Int(size_dev)
     var row = thread_idx.y
     var col = thread_idx.x
-    # FILL ME IN (roughly 2 lines)
+    if row < size and col < size:
+        output[unsafe_offset=thread_idx.y * size + thread_idx.x] = (
+            a[unsafe_offset=thread_idx.y * size + thread_idx.x] + 10
+        )
 
 
 # ANCHOR_END: add_10_2d
