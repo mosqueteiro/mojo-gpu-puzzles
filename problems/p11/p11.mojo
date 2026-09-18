@@ -34,6 +34,17 @@ def pooling(
 
     var global_i = block_dim.x * block_idx.x + thread_idx.x
     var local_i = thread_idx.x
+    if global_i < size and local_i < TPB:
+        shared[local_i] = a[global_i]
+
+    barrier()
+    if global_i < size and local_i < TPB:
+        var accum: Float32  = 0
+        for i in range(local_i - 2, local_i + 1):
+            if i >= 0:
+                accum += shared[i]
+
+        output[global_i] = accum
     # FILL ME IN (roughly 10 lines)
 
 
