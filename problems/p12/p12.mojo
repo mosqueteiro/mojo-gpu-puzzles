@@ -30,8 +30,24 @@ def dot_product(
     size_dev: Int32,
 ):
     var size = Int(size_dev)
-    # FILL ME IN (roughly 13 lines)
-    ...
+    var shared = stack_allocation[dtype=dtype, address_space=AddressSpace.SHARED](row_major[TPB]())
+    var global_i = block_dim.x * block_idx.x + thread_idx.x
+    var local_i = thread_idx.x
+
+    if global_i < size and local_i < TPB:
+        shared[local_i] = a[global_i] * b[global_i]
+    barrier()
+
+    var size_reduce = size // 2
+    while size_reduce > 1:
+        if local_i < size_reduce:
+            shared[local_i] += shared[local_i + size_reduce]
+        size_reduce //= 2
+        barrier()
+
+    if global_i == 0:
+        output[global_i] = shared[0] + shared[1]
+
 
 
 # ANCHOR_END: dot_product
