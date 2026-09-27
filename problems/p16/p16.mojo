@@ -31,7 +31,12 @@ def naive_matmul[
 ):
     var row = block_dim.y * block_idx.y + thread_idx.y
     var col = block_dim.x * block_idx.x + thread_idx.x
-    # FILL ME IN (roughly 6 lines)
+
+    if row < size and col < size:
+        var accum: output.ElementType = 0.0
+        comptime for i in range(size):
+            accum += a[i, col] * b[row, i]
+        output[row, col] = accum
 
 
 # ANCHOR_END: naive_matmul
@@ -49,7 +54,22 @@ def single_block_matmul[
     var col = block_dim.x * block_idx.x + thread_idx.x
     var local_row = thread_idx.y
     var local_col = thread_idx.x
-    # FILL ME IN (roughly 12 lines)
+
+    var shared_a = stack_allocation[dtype=dtype, address_space=AddressSpace.SHARED](row_major[TPB, TPB]())
+    var shared_b = stack_allocation[dtype=dtype, address_space=AddressSpace.SHARED](row_major[TPB, TPB]())
+
+    if row < size and col < size:
+        shared_a[local_row, local_col] = a[row, col]
+        shared_b[local_row, local_col] = b[row, col]
+    barrier()
+
+    if row < size and col < size:
+        var accum: output.ElementType = 0.0
+        comptime for i in range(size):
+            accum += shared_a[local_row, i] * shared_b[i, local_col]
+
+        output[row, col] = accum
+
 
 
 # ANCHOR_END: single_block_matmul
@@ -74,7 +94,27 @@ def matmul_tiled[
     var local_col = thread_idx.x
     var tiled_row = block_idx.y * TPB + local_row
     var tiled_col = block_idx.x * TPB + local_col
-    # FILL ME IN (roughly 20 lines)
+
+    var shared_a = stack_allocation[dtype=dtype, address_space=AddressSpace.SHARED](row_major[TPB, TPB]())
+    var shared_b = stack_allocation[dtype=dtype, address_space=AddressSpace.SHARED](row_major[TPB, TPB]())
+
+    var acc: output.ElementType = 0.0
+    comptime for phase in range(size//TPB):
+        if tiled_row < size and tiled_col < size:
+            shared_a[local_row, local_col] = a[tiled_row, local_col + phase*TPB]
+            shared_b[local_row, local_col] = b[local_row + phase*TPB, tiled_col]
+        else:
+            shared_a[local_row, local_col] = 0
+            shared_b[local_row, local_col] = 0
+        barrier()
+
+        comptime for k in range(TPB):
+            acc += shared_a[local_row, k] * shared_b[k, local_col]
+        barrier()
+
+    output[tiled_row, tiled_col] = acc
+
+    # see Idiomatic solution for better memory loading pattern
 
 
 # ANCHOR_END: matmul_tiled
